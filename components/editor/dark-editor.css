@@ -1,0 +1,73 @@
+/* light mode defaults */
+.markdown-editor {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+/* editor background (dark mode only) */
+.dark .markdown-editor {
+  background-color: #020817;
+  color: #ffffff;
+  --basePageBg: #020817;
+  --baseBase: #020817;
+  --baseBgSubtle: #0b1220;
+  --baseBg: #111827;
+  --baseBgHover: #1f2937;
+  --baseBgActive: #334155;
+  --baseLine: #334155;
+  --baseBorder: #475569;
+  --baseBorderHover: #64748b;
+  --baseSolid: #94a3b8;
+  --baseSolidHover: #cbd5e1;
+  --baseText: #e5e7eb;
+  --baseTextContrast: #ffffff;
+  --accentText: #93c5fd;
+  --accentSolid: #2563eb;
+  --accentSolidHover: #3b82f6;
+}
+
+/* MDXEditor rich text surface */
+.dark .markdown-editor [contenteditable="true"],
+.dark .markdown-editor .mdxeditor-root-contenteditable,
+.dark .markdown-editor [class*="rootContentEditable"],
+.dark .markdown-editor .mdxeditor-root-contenteditable * {
+  color: #ffffff !important;
+  caret-color: #ffffff;
+}
+
+/* visible placeholder in rich text mode */
+.dark .markdown-editor [contenteditable="true"]::before,
+.dark .markdown-editor .mdxeditor-root-contenteditable::before {
+  color: #9ca3af !important;
+}
+
+/* CodeMirror root */
+.dark .markdown-editor .cm-editor {
+  background-color: #020817;
+}
+
+/* text you type */
+.dark .markdown-editor .cm-content,
+.dark .markdown-editor .cm-line {
+  color: #ffffff;
+  caret-color: #ffffff;
+}
+
+/* placeholder text */
+.dark .markdown-editor .cm-placeholder {
+  color: #9ca3af;
+}
+
+/* selection */
+.dark .markdown-editor .cm-selectionBackground {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Toolbar/readability in dark mode */
+.dark .markdown-editor [class*="toolbarRoot"],
+.dark .markdown-editor [class*="toolbarGroup"],
+.dark .markdown-editor [class*="toolbarButton"],
+.dark .markdown-editor [class*="toolbarToggleItem"],
+.dark .markdown-editor [class*="toolbarNodeKindSelectTrigger"] {
+  color: #ffffff !important;
+}

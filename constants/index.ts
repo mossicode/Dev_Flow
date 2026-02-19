@@ -1,0 +1,37 @@
+export const sidebrarLinks = [
+    {
+        imgURL:"./logo.png",
+        label:"home",
+        route:"/"
+    },
+    {
+        imgURL:"./community",
+        label:"community",
+        route:"/community"
+    },
+    {
+        imgURL:"./collection",
+        label:"collection",
+        route:"/collection"
+    },
+    {
+        imgURL:"./djjd",
+        label:"job",
+        route:"/job"
+    },
+    {
+        imgURL:"./djjd",
+        label:"profile",
+        route:"/profile/1"
+    },
+    {
+        imgURL:"./djjd",
+        label:"tag",
+        route:"/tag"
+    },
+    {
+        imgURL:"./djjd",
+        label:"ask-question",
+        route:"/ask-question"
+    },
+]
