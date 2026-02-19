@@ -7,6 +7,8 @@ import { auth } from "../../../auth";
 
 export default async function Navbar() {
   const session=await auth();
+  const userImage = session?.user?.image || "/avatar.png";
+  const userName = session?.user?.name || "User";
   return (
     <div className=" flex-between fixed z-50 w-full gap-5 bg-blend-lighten px-5 bg-gray-800 py-4 ">
       <Link href="/" className="flex items-center gap-1">
@@ -23,7 +25,7 @@ export default async function Navbar() {
           
        
         <Theme />
-        <Image src={session.user.image} alt={session.user.name} height={35} width={35} className="rounded-full object-fit" />
+        <Image src={userImage} alt={userName} height={35} width={35} className="rounded-full object-fit" />
       </div>
     </div>
   )
