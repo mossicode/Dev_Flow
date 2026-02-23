@@ -1,14 +1,20 @@
-"use client"
-import React from 'react'
-import {QuesitonForm} from '../../../components/forms/question-form'
+import { QuesitonForm } from "../../../components/forms/question-form";
+import { auth } from "../../../auth";
+import { redirect } from "next/navigation";
 
-function page() {
+async function Page() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
   return (
     <div>
       <h1>Ask Question</h1>
       <QuesitonForm />
     </div>
-  )
+  );
 }
 
-export default page
+export default Page;

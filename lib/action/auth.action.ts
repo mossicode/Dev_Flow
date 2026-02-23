@@ -1,7 +1,7 @@
 "use server";
 
 import mongoose from "mongoose";
-import { AuthCredentials, SignInCredentials } from "../../types/action";
+import { AuthCredentials } from "../../types/action";
 import { ActionResponse, ErrorResponse } from "../../types/global";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -11,6 +11,29 @@ import User from "../../database/user.model";
 import bcrypt from "bcryptjs";
 import Account from "../../database/account.model";
 import { signIn } from "../../auth";
+import { AuthError } from "next-auth";
+
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
+function mapAuthError(error: unknown): ErrorResponse | null {
+    if (error instanceof AuthError) {
+        if (error.type === "CredentialsSignin") {
+            return {
+                success: false,
+                status: 401,
+                error: { message: "Invalid email or password" },
+            };
+        }
+
+        return {
+            success: false,
+            status: 401,
+            error: { message: "Authentication failed. Please try again." },
+        };
+    }
+
+    return null;
+}
 
 export async function signUPWithCredentials(params: AuthCredentials): Promise<ActionResponse> {
     try {
@@ -21,12 +44,13 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
         }
 
         const { name, username, email, password } = validatedParams;
+        const normalizedEmail = normalizeEmail(email);
         const session = await mongoose.startSession();
 
         try {
             session.startTransaction();
 
-            const existingUser = await User.findOne({ email }).session(session);
+            const existingUser = await User.findOne({ email: normalizedEmail }).session(session);
             if (existingUser) {
                 throw new Error("User already exists");
             }
@@ -43,7 +67,7 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
                     {
                         username,
                         name,
-                        email,
+                        email: normalizedEmail,
                         image: "https://placehold.co/200x200",
                     },
                 ],
@@ -56,7 +80,7 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
                         userId: newUser._id,
                         name,
                         provider: "credentials",
-                        providerAccountId: email,
+                        providerAccountId: normalizedEmail,
                         password: hashedPassword,
                     },
                 ],
@@ -71,14 +95,18 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
             await session.endSession();
         }
 
-        await signIn("credentials", { email, password, redirect: false });
+        await signIn("credentials", { email: normalizedEmail, password, redirect: false });
         return { success: true };
     } catch (error) {
+        const authError = mapAuthError(error);
+        if (authError) return authError;
+
         return handleError(error) as ErrorResponse;
     }
 }
 
-export async function signInWithCredentials(params: SignInCredentials): Promise<ActionResponse> {
+export async function signInWithCredentials(
+    params: Pick<AuthCredentials, 'email' | 'password'>): Promise<ActionResponse> {
     try {
         const validationResult = await action({ params, schema: SignInSchema });
         const validatedParams = validationResult.params;
@@ -87,10 +115,14 @@ export async function signInWithCredentials(params: SignInCredentials): Promise<
         }
 
         const { email, password } = validatedParams;
-        await signIn("credentials", { email, password, redirect: false });
+        const normalizedEmail = normalizeEmail(email);
+        await signIn("credentials", { email: normalizedEmail, password, redirect: false });
 
         return { success: true };
     } catch (error) {
+        const authError = mapAuthError(error);
+        if (authError) return authError;
+
         return handleError(error) as ErrorResponse;
     }
 }

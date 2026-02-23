@@ -22,7 +22,7 @@ export const sidebrarLinks = [
     {
         imgURL:"./djjd",
         label:"profile",
-        route:"/profile/1"
+        route:"/profile"
     },
     {
         imgURL:"./djjd",

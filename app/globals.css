@@ -48,6 +48,8 @@
 }
 
 :root {
+  --font-geist-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-geist-mono: "Cascadia Mono", "Consolas", "Courier New", monospace;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -162,3 +164,9 @@
 .markdown-editor .cm-selectionBackground {
   background-color: rgba(255, 255, 255, 0.2);
 }
+.mdxeditor-popup-container { 
+  min-height: 0 !important;
+  border-color: transparent !important; }
+.popupContainer_1e2ox_1240 {
+  min-height: 0 !important; 
+  border-color: transparent !important; }

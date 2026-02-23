@@ -19,21 +19,21 @@ function RightSidebar() {
         {_id:"5", name:"react-query", questions:1009},
     ]
   return (
-    <section className="pt-36 border-gray-800 fixed right-0 top-0 z-40 flex h-screen w-87.5 gap-6 flex-col overflow-y-auto border-l p-6 shadow dark:shadow-none max-xl:hidden ">
+    <section className="pt-30 border-gray-800 fixed right-0 top-0 z-40 flex h-screen w-70 gap-6 flex-col overflow-y-auto border-l p-6 shadow dark:shadow-none max-lg:hidden ">
         <div>
-            <h3 className="font-bold  ">Top Questions</h3>
-            <div className="mt-7 flex w-full flex-col gap-7.5 ">
+            <h3 className="font-bold text-lg  ">Top Questions</h3>
+            <div className="mt-4 flex w-full flex-col gap-5 text-base">
                 {
                     hotQuestions.map(({_id, title})=>(
-                        <Link key={_id} href={ROUTES.PROFILE(_id)} className="flex items-center justify-between gap-7 cursor-pointer " >
+                        <Link key={_id} href={ROUTES.PROFILE(_id)} className="flex items-center justify-between gap-4 cursor-pointer " >
                             <p className="">{title}</p>
-                            <LucideChevronsLeftRight />
+                            <LucideChevronsLeftRight className="size-4" />
                         </Link> 
                     ))
                 }
             </div>
         </div>
-        <div className="mt-36 ">
+        <div className="mt-12 ">
             <h3>Popular Tags</h3>
             <div className="mt-7 flex flex-col gap-4 !dark:bg-white ">
                 {popularTags.map(({_id, name, questions})=> (

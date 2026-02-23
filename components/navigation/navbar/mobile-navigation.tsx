@@ -9,7 +9,7 @@ import {
 import ROUTES from "../../../constants/Route"
 import NavLinks from "./nav-links";
 import {  Menu } from "lucide-react";
-export default function MobileNavigation() {
+export default function MobileNavigation({ userId }: { userId?: string }) {
   return (
     <div className="hidden max-sm:block">
         
@@ -32,7 +32,7 @@ export default function MobileNavigation() {
        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto ">
             <SheetClose >
                 <section className="flex h-full flex-col gap-6 pt-10 px-2">
-                    <NavLinks isMobileNav />
+                    <NavLinks isMobileNav userId={userId} />
                 </section>
             </SheetClose>
             <div className="flex flex-col gap-3 px-3">
@@ -59,3 +59,4 @@ export default function MobileNavigation() {
     </div>
   )
 }
+

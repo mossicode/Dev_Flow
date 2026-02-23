@@ -9,6 +9,10 @@ import Account from "./database/account.model";
 import User from "./database/user.model";
 import { connectDB } from "./lib/mongodb";
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         GitHub,
@@ -24,11 +28,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const email = credentials?.email as string | undefined;
                 const password = credentials?.password as string | undefined;
                 if (!email || !password) return null;
+                const normalizedEmail = normalizeEmail(email);
 
-                const account = await Account.findOne({
+                let account = await Account.findOne({
                     provider: "credentials",
-                    providerAccountId: email,
+                    providerAccountId: normalizedEmail,
                 });
+
+                if (!account) {
+                    account = await Account.findOne({
+                        provider: "credentials",
+                        providerAccountId: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                    });
+                }
                 if (!account?.password) return null;
 
                 const isPasswordValid = await bcrypt.compare(password, account.password);

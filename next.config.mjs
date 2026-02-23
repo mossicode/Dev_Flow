@@ -17,6 +17,11 @@ const nextConfig = {
         hostname: "lh3.googleusercontent.com", // Google avatars
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        port: "",
+      },
     ],
   },
 };

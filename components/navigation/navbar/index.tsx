@@ -6,9 +6,16 @@ import { Theme } from "./Theme";
 import { auth } from "../../../auth";
 
 export default async function Navbar() {
-  const session=await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch {
+    session = null;
+  }
   const userImage = session?.user?.image || "/avatar.png";
   const userName = session?.user?.name || "User";
+  const userId = session?.user?.id;
+
   return (
     <div className=" flex-between fixed z-50 w-full gap-5 bg-blend-lighten px-5 bg-gray-800 py-4 ">
       <Link href="/" className="flex items-center gap-1">
@@ -21,9 +28,8 @@ export default async function Navbar() {
       </Link>
       <p className="text-nowrap bg-chart-3">Global Search</p>
       <div className="flex gap-x-2 items-center ">
-        <MobileNavigation />
-          
-       
+        <MobileNavigation userId={userId} />
+
         <Theme />
         <Image src={userImage} alt={userName} height={35} width={35} className="rounded-full object-fit" />
       </div>

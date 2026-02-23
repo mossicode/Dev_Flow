@@ -7,10 +7,10 @@ export default function RootLayout({children}:{children:ReactNode}) {
   return (
     <main className=''>
        <Navbar />
-        <div className='h-screen'>
+        <div className='h-screen flex'>
           <LeftSidebar />
-          <section className='px-6 pb-6 pt-36 max-md:pb-14 sm:px-14 lg:ml-66.5 xl:mr-87.5'>
-            <div className='mx-auto w-full max-w-5xl '>
+          <section className='px-0 pb-6 pt-30 max-md:pb-14 sm:px-14 lg:ml-60 w-full lg:me-64 xl:mr-60'>
+            <div className='mx-auto w-full  '>
               {children}
             </div>
           </section>
