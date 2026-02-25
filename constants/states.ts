@@ -25,3 +25,11 @@ export const EMPTY_QUESTION={
         href:ROUTES.ASK_QUESTION
     }
 }
+export const EMPTY_TAGS={
+    title:"Ahh, NO TAG yet",
+    message:"You dont have any TAG up to now.",
+    button:{
+        text:"Add TAG",
+        href:`/${ROUTES.TAGS}`
+    }
+}

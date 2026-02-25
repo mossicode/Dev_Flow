@@ -24,6 +24,9 @@ interface GetQuestionParams {
   questionId?: string;
   quesitionId?: string;
 }
+interface QuestionMutationResult {
+  _id: string;
+}
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
@@ -74,7 +77,7 @@ async function upsertTagsWithLinks(
   return tagIds;
 }
 
-export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse> {
+export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<QuestionType>> {
   try {
     await action({});
 
@@ -99,7 +102,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   }
 }
 
-export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse> {
+export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<QuestionMutationResult>> {
   let session: mongoose.ClientSession | null = null;
 
   try {
@@ -148,7 +151,7 @@ export async function createQuestion(params: CreateQuestionParams): Promise<Acti
   }
 }
 
-export async function editQuestion(params: EditQuestionParams): Promise<ActionResponse<IQuestion>> {
+export async function editQuestion(params: EditQuestionParams): Promise<ActionResponse<QuestionMutationResult>> {
   let session: mongoose.ClientSession | null = null;
 
   try {

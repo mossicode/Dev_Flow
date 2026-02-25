@@ -42,6 +42,7 @@
       const result = await onSubmit(data) as ActionResponse;
       if (result?.success) {
         form.reset();
+        router.push("/");
         router.refresh();
         return;
       }

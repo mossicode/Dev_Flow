@@ -8,7 +8,7 @@ error?:{
   details?:Record<string, string[]>; 
 }
  data:T[] | null | undefined,
-children:React.ReactNode
+children?:React.ReactNode
  empty:{
     title:string;
     message:string;
@@ -48,7 +48,7 @@ export default function DataRender<T>({
   success,
   error,
   data,
-  empty=DEFAULT_EMPTY,
+  empty={EMPTY_TAGS},
   children
 }:Props<T>) {
   if(!success){
