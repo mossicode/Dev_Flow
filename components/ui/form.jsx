@@ -48,7 +48,7 @@ const useFormField = () => {
 const FormItemContext = React.createContext({})
 
 function FormItem({
-  className,
+  className = "",
   ...props
 }) {
   const id = React.useId()
@@ -61,7 +61,7 @@ function FormItem({
 }
 
 function FormLabel({
-  className,
+  className = "",
   ...props
 }) {
   const { error, formItemId } = useFormField()
@@ -96,7 +96,7 @@ function FormControl({
 }
 
 function FormDescription({
-  className,
+  className = "",
   ...props
 }) {
   const { formDescriptionId } = useFormField()
@@ -111,7 +111,7 @@ function FormDescription({
 }
 
 function FormMessage({
-  className,
+  className = "",
   ...props
 }) {
   const { error, formMessageId } = useFormField()
