@@ -54,8 +54,8 @@ export default function DataRender<T>({
   if(!success){
     return <StateSkeleton
      image={
-    { light:"/logo.png",
-      dark:"/logo.png",
+    { light:"/close.png",
+      dark:"/close.png",
       alt:"empty"
     }
   }
@@ -70,8 +70,8 @@ export default function DataRender<T>({
   }
   if(!data || data.length===0) return <StateSkeleton 
   image={
-    { light:"/logo.png",
-      dark:"/logo.png",
+    { light:"/close.png",
+      dark:"/close.png",
       alt:"empty"
     }
   }

@@ -1,36 +1,36 @@
 export const sidebrarLinks = [
     {
-        imgURL:"./home.png",
+        imgURL:"/home.png",
         label:"home",
         route:"/"
     },
     {
-        imgURL:"./community",
+        imgURL:"/group.png",
         label:"community",
         route:"/community"
     },
     {
-        imgURL:"./database.png",
+        imgURL:"/database.png",
         label:"collection",
         route:"/collection"
     },
     {
-        imgURL:"./promotion.png",
+        imgURL:"/promotion.png",
         label:"job",
         route:"/job"
     },
     {
-        imgURL:"./djjd",
+        imgURL:"/user.png",
         label:"profile",
         route:"/profile"
     },
     {
-        imgURL:"./price-tag.png",
+        imgURL:"/price-tag.png",
         label:"tag",
         route:"/tag"
     },
     {
-        imgURL:"./question-mark.png",
+        imgURL:"/question-mark.png",
         label:"ask-question",
         route:"/ask-question"
     },

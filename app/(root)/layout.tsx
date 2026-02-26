@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left Sidebar */}
-        <div className="w-56 max-sm:hidden max-lg:w-52 mt-26">
+        <div className="w-56 max-sm:hidden max-lg:w-52 mt-26 max-md:w-20">
           <LeftSidebar />
         </div>
 
