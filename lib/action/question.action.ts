@@ -1,5 +1,4 @@
 "use server"
-import FilterQuery from "mongoose"
 import mongoose from "mongoose";
 import type { ActionResponse, ErrorResponse, PaginatedSearchParams, Question as QuestionType } from "../../types/global";
 import handleError from "../handlers/error";
@@ -230,7 +229,7 @@ export async function getQuestions(
     const skip = (Number(page) - 1) * pageSize;
     const limit = Number(pageSize);
 
-    const filterquery: FilterQuery<IQuestion> = {};
+    const filterquery: Record<string, unknown> = {};
 
     if (filter === "recommended") {
       return { success: true, data: { question: [], isNext: false } };

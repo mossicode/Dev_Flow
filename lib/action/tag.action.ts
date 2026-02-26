@@ -1,6 +1,5 @@
-import type { FilterQuery } from "mongoose";
 import type { ActionResponse, ErrorResponse, PaginatedSearchParams, Tag as TagType } from "../../types/global";
-import TagModel, { ITag } from "../../database/tag.model";
+import TagModel from "../../database/tag.model";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { PaginatedSearchParamsSchema } from "../validation";
@@ -18,7 +17,7 @@ export const getTags = async (
     const skip = (Number(page) - 1) * Number(pageSize);
     const limit = Number(pageSize);
 
-    const filterQuery: FilterQuery<ITag> = {};
+    const filterQuery: Record<string, unknown> = {};
     if (query) {
       filterQuery.$or = [{ name: { $regex: query, $options: "i" } }];
     }
