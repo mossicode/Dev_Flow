@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import log from "../../../public/logo.png"
 // import Theme from "./Theme";
 import MobileNavigation from "./mobile-navigation";
 import { Theme } from "./Theme";
@@ -16,22 +17,26 @@ export default async function Navbar() {
   const userName = session?.user?.name || "User";
   const userId = session?.user?.id;
 
+  // import logo from "/logo.png"
+
   return (
-    <div className=" flex-between fixed z-50 w-full gap-5 bg-blend-lighten px-5 bg-gray-800 py-4 ">
+    <div className=" flex-between fixed z-50 w-full gap-5 bg-blend-lighten px-5 bg-neutral-900 py-4 max-sm:px-2 ">
       <Link href="/" className="flex items-center gap-1">
-         <Image src="/logo.png" width={23} height={23} alt="an image" />
-         <p className="font-medium  text-gray-900 dark:text-white ">Dew
-          <span className="text-amber-600">
+         <Image src={log} width={23} height={23} alt="an image" />
+         <p className="font-medium  text-gray-900 dark:text-white max-sm:hidden">Dew
+          <span className="text-amber-600 ">
               Flow
           </span>
          </p>
       </Link>
-      <p className="text-nowrap bg-chart-3">Global Search</p>
+      <p className="text-nowrap text-white">Global Search</p>
       <div className="flex gap-x-2 items-center ">
         <MobileNavigation userId={userId} />
 
-        <Theme />
-        <Image src={userImage} alt={userName} height={35} width={35} className="rounded-full object-fit" />
+        <div className="max-sm:hidden">
+          <Theme />
+        </div>
+        <Image src={userImage} alt={userName} height={35} width={35} className="rounded-full object-fit max-sm:w-6" />
       </div>
     </div>
   )

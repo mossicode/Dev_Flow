@@ -26,8 +26,8 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
             href={href}
             className={cn(
               "px-3 rounded-lg cursor-pointer transition-colors duration-500 ease-in-out",
-              isActive ? "bg-indigo-500 text-white shadow-md shadow-indigo-400/50" : "bg-transparent text-gray-700 dark:text-gray-300",
-              "flex items-center justify-start gap-2 p-2"
+              isActive ? "bg-indigo-950 text-white shadow-md shadow-indigo-400/50" : "bg-transparent text-gray-700 dark:text-gray-300",
+              "flex items-center justify-start gap-3 p-1.5"
             )}
             key={item.label}
           >

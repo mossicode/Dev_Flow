@@ -105,19 +105,19 @@ export function QuesitonForm({ question, isEdit = false }: Params) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-10 ">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel>
-                Question Title <span className="text-red-500">*</span>
+                Question Title <span className="text-red-500 max-sm:text-sm">*</span>
               </FormLabel>
               <FormControl>
                 <Input placeholder="Enter your title" {...field} />
               </FormControl>
-              <FormDescription className="mt-2.5 text-slate-600 dark:text-slate-300">
+              <FormDescription className="mt-2 max-sm:mt-1.5 text-slate-600 dark:text-slate-300">
                 Be specific and imagine your question is someone else&apos;s problem.
               </FormDescription>
               <FormMessage className="text-red-600 dark:text-red-400" />
@@ -130,13 +130,13 @@ export function QuesitonForm({ question, isEdit = false }: Params) {
           name="content"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
-              <FormLabel className="text-slate-900 dark:text-slate-100">
+              <FormLabel className="text-slate-900 dark:text-slate-100 max-sm:text-xs">
                 Detailed explanation of your problem <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Editor value={field.value} fieldChange={field.onChange} editorRef={editRef} />
               </FormControl>
-              <FormDescription className="mt-2.5 text-slate-600 dark:text-slate-300">
+              <FormDescription className="mt-2.5 text-slate-600 dark:text-slate-300 max-sm:text-xs">
                 Introduce the problem and expand what you wrote in the title.
               </FormDescription>
               <FormMessage className="text-red-600 dark:text-red-400" />
@@ -177,7 +177,7 @@ export function QuesitonForm({ question, isEdit = false }: Params) {
                   )}
                 </div>
               </FormControl>
-              <FormDescription className="mt-2.5 text-slate-600 dark:text-slate-300">
+              <FormDescription className="mt-2 max-sm:mt-1 text-slate-600 dark:text-slate-300 max-sm:text-xs">
                 You can add up to 3 tags.
               </FormDescription>
               <FormMessage className="text-red-600 dark:text-red-400" />
@@ -185,9 +185,9 @@ export function QuesitonForm({ question, isEdit = false }: Params) {
           )}
         />
 
-        <div className="mt-16 flex justify-end">
+        <div className="mt-16 max-sm:mt-5 flex justify-end">
           <Button
-            className="flex items-center justify-end bg-orange-500 px-8 py-4 text-xl text-white"
+            className="flex items-center justify-end bg-orange-500 px-8 py-4 max-sm:py-2 text-xl max-sm:text-base max-sm:mb-3 text-white"
             type="submit"
             disabled={isPending}
           >

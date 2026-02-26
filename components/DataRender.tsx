@@ -33,12 +33,12 @@ interface StateSkeletonProps{
 }
 const StateSkeleton=({image, title, message, button}:StateSkeletonProps)=>{
   return (
-    <div className='mt-16 flex w-full flex-col items-center justify-center sm:mt-10 gap-y-2'>
+    <div className='mt-16 max-sm:mt-6 flex w-full flex-col items-center justify-center sm:mt-10 gap-y-2'>
       <>
         <Image src={image.dark} alt={image.alt} height={200} width={200} className='hidden dark:block' />
         <Image src={image.light} alt={image.alt} height={200} width={200} className='block dark:hidden' />
-        <h2 className='font-bold'>{title}</h2>
-        <p className='text-gray-400'>{message}</p>
+        <h2 className='font-bold w-full text-wrap'>{title}</h2>
+        <p className='text-gray-400 text-center'>{message}</p>
         {button && <Link href={button.href}><button className='bg-white text-black mb-5 px-3 py-1 rounded-sm font-serif'>{button.text}</button></Link>}
       </>
     </div>
@@ -81,6 +81,8 @@ export default function DataRender<T>({
 
 /> 
   return (
-    <>{children}</>
+    <div className='w-full'>
+      {children}
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 export const sidebrarLinks = [
     {
-        imgURL:"./logo.png",
+        imgURL:"./home.png",
         label:"home",
         route:"/"
     },
@@ -10,12 +10,12 @@ export const sidebrarLinks = [
         route:"/community"
     },
     {
-        imgURL:"./collection",
+        imgURL:"./database.png",
         label:"collection",
         route:"/collection"
     },
     {
-        imgURL:"./djjd",
+        imgURL:"./promotion.png",
         label:"job",
         route:"/job"
     },
@@ -25,12 +25,12 @@ export const sidebrarLinks = [
         route:"/profile"
     },
     {
-        imgURL:"./djjd",
+        imgURL:"./price-tag.png",
         label:"tag",
         route:"/tag"
     },
     {
-        imgURL:"./djjd",
+        imgURL:"./question-mark.png",
         label:"ask-question",
         route:"/ask-question"
     },

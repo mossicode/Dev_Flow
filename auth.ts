@@ -13,7 +13,19 @@ const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+// Protect production deployments from accidental localhost Auth.js base URL.
+if (process.env.NODE_ENV === "production" && process.env.VERCEL_URL) {
+    const vercelAuthUrl = `https://${process.env.VERCEL_URL}`;
+    if (!process.env.AUTH_URL || process.env.AUTH_URL.includes("localhost")) {
+        process.env.AUTH_URL = vercelAuthUrl;
+    }
+    if (!process.env.NEXTAUTH_URL || process.env.NEXTAUTH_URL.includes("localhost")) {
+        process.env.NEXTAUTH_URL = vercelAuthUrl;
+    }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    trustHost: true,
     providers: [
         GitHub,
         Credentials({
@@ -23,38 +35,68 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                await connectDB();
+                try {
+                    await connectDB();
 
-                const email = credentials?.email as string | undefined;
-                const password = credentials?.password as string | undefined;
-                if (!email || !password) return null;
-                const normalizedEmail = normalizeEmail(email);
+                    const email = credentials?.email as string | undefined;
+                    const password = credentials?.password as string | undefined;
+                    if (!email || !password) return null;
+                    const normalizedEmail = normalizeEmail(email);
 
-                let account = await Account.findOne({
-                    provider: "credentials",
-                    providerAccountId: normalizedEmail,
-                });
-
-                if (!account) {
-                    account = await Account.findOne({
-                        provider: "credentials",
-                        providerAccountId: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                    let account = await Account.findOne({
+                        provider: { $regex: "^credentials$", $options: "i" },
+                        providerAccountId: normalizedEmail,
                     });
+
+                    if (!account) {
+                        account = await Account.findOne({
+                            provider: { $regex: "^credentials$", $options: "i" },
+                            providerAccountId: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                        });
+                    }
+
+                    // Fallback for legacy records where providerAccountId was not normalized.
+                    if (!account) {
+                        const existingUser = await User.findOne({
+                            email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                        });
+                        if (existingUser) {
+                            account = await Account.findOne({
+                                userId: existingUser._id,
+                                provider: { $regex: "^credentials$", $options: "i" },
+                            });
+                        }
+                    }
+
+                    if (!account?.password) return null;
+
+                    const isBcryptHash = account.password.startsWith("$2a$") || account.password.startsWith("$2b$") || account.password.startsWith("$2y$");
+                    let isPasswordValid = false;
+
+                    if (isBcryptHash) {
+                        isPasswordValid = await bcrypt.compare(password, account.password);
+                    } else {
+                        isPasswordValid = account.password === password;
+                        if (isPasswordValid) {
+                            account.password = await bcrypt.hash(password, 12);
+                            await account.save();
+                        }
+                    }
+
+                    if (!isPasswordValid) return null;
+
+                    const user = await User.findById(account.userId);
+                    if (!user) return null;
+
+                    return {
+                        id: user._id.toString(),
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                    };
+                } catch {
+                    return null;
                 }
-                if (!account?.password) return null;
-
-                const isPasswordValid = await bcrypt.compare(password, account.password);
-                if (!isPasswordValid) return null;
-
-                const user = await User.findById(account.userId);
-                if (!user) return null;
-
-                return {
-                    id: user._id.toString(),
-                    name: user.name,
-                    email: user.email,
-                    image: user.image,
-                };
             },
         }),
     ],

@@ -4,6 +4,8 @@ import LocalSearch from '../../../components/search/LocalSearch';
 import DataRender from '../../../components/DataRender';
 import { EMPTY_TAGS } from '../../../constants/states';
 import TagCard from '../../../components/card/TagCard';
+// import { techDescriptions } from '../../../lib/utils';
+import {getTechDescription} from "../../../lib/utils"
 
 async function page({searchParams}:RouteParams) {
   const {page, pageSize, query, filter}= await searchParams;
@@ -31,7 +33,7 @@ async function page({searchParams}:RouteParams) {
         data={tags}
         empty={EMPTY_TAGS}
       >
-        <div>
+        <div className='flex mt-6 gap-3 flex-wrap justify-between'>
           {tags.map((tag)=>(
             <TagCard key={tag._id} {...tag} compact />
           ))}

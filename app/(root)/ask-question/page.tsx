@@ -10,8 +10,8 @@ async function Page() {
   }
 
   return (
-    <div>
-      <h1>Ask Question</h1>
+    <div className="max-sm:px-3">
+      <h1 className="max-sm:mb-3 mb-4 text-lg max-sm:text-base">Ask Question</h1>
       <QuesitonForm />
     </div>
   );

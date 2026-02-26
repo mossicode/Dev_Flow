@@ -34,7 +34,7 @@ export const getTimeStamp = (createdAt: Date | string) => {
   return "just now";
 };
 
-const techDescriptions: Record<string, string> = {
+ const techDescriptions = {
   javascript: "A versatile scripting language used to build interactive web applications on the client and server.",
   typescript: "A typed superset of JavaScript that improves code safety, tooling, and maintainability.",
   react: "A component-based UI library for building fast and reusable frontend interfaces.",

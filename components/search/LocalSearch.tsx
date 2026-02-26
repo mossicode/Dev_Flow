@@ -62,8 +62,8 @@ function LocalSearch({ imgSrc, route, placeholder, otherClasses }: SearchTypePro
   }, [searchQuery, query, pathname, route, router, searchParamsString])
 
   return (
-    <div className={cn("min-h-14 flex grow items-center rounded-sm px-4 bg-gray-100 gap-x-2 ", otherClasses)}>
-      <Search className="cursor-pointer text-black" />
+    <div className={cn("min-h-14 flex grow items-center border rounded-sm px-4 max-sm:x-2 max-sm:min-h-10 dark:bg-gray-900 dark:text-white gap-x-2 ", otherClasses)}>
+      <Search className="cursor-pointer text-blue-400 max-sm:size-4.5" />
 
       <input
         type="text"
@@ -72,7 +72,7 @@ function LocalSearch({ imgSrc, route, placeholder, otherClasses }: SearchTypePro
         onChange={(e) => {
           setSearchQuery(e.target.value)
         }}
-        className="no-focus border-none shadow-none ring-0 outline-0 text-black"
+        className="no-focus border-none shadow-none ring-0 outline-0  placeholder:text-gray-300"
       />
     </div>
   )

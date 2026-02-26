@@ -72,30 +72,32 @@ export default async function Home({searchParams}:SearchParams) {
   // });
   return (
    <>
-    <section className=" flex w-full flex-col-reverse sm:flex-row sm:items-center justify-between">
-      <h1 className="font-bold">All questions</h1>
-     <button className="min-h-11.5 rounded-sm px-4 py-3 bg-amber-700 text-gray-200">
+    <section className=" px-3 flex w-full flex-col-reverse sm:flex-row sm:items-center max-sm:px-2 justify-between">
+      <h1 className="font-bold mt-2">All questions</h1>
+     <button className="min-h-11.5 rounded-sm max-sm:min-h-5 px-4 py-3 max-sm:py-2 max-sm:text-sm  bg-amber-700 text-gray-200">
       <Link href={ROUTES.ASK_QUESTION}>Ask a Quesitons</Link>
      </button>
     </section>
-    <section className="mt-11 ">
+    <section className="mt-11 max-sm:px-2 max-sm:mt-6">
       <LocalSearch imgSrc="./dd" placeholder="Search Question..." otherClasses="flex-1" route="/" />
     </section>
     <HomeFilter />
-    <DataRender
-      success={success}
-      error={error}
-      data={questions}
-      empty={EMPTY_QUESTION}
-    >
-      {questions.map((question) => (
-        <QuestionCard key={question._id} question={question} />
-      ))}
-    </DataRender>
+     <div className="max-sm:px-3">
+        <DataRender
+          success={success}
+          error={error}
+          data={questions}
+          empty={EMPTY_QUESTION}
+        >
+          {questions.map((question) => (
+            <QuestionCard key={question._id} question={question} />
+          ))}
+        </DataRender>
+     </div>
     {/* {
       success 
       ?
-      <>
+      <div>
         <div className="mt-10 flex w-full flex-col gap-6">
       {
        questions && questions.length >0 ?(
@@ -112,7 +114,7 @@ export default async function Home({searchParams}:SearchParams) {
        )
       }
     </div>
-      </>
+      </div>
       :
       <>
        <div className="mt-10 flex justify-center items-center w-full">

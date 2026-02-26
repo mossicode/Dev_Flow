@@ -1,6 +1,6 @@
 import Link from "next/link"
 import ROUTES from "../../constants/Route"
-import { LucideChevronsLeftRight } from "lucide-react"
+import { Home, LucideChevronsLeftRight } from "lucide-react"
 import TagCard from "../card/TagCard"
 
 function RightSidebar() {
@@ -19,7 +19,7 @@ function RightSidebar() {
         {_id:"5", name:"react-query", questions:1009},
     ]
   return (
-    <section className="pt-30 border-gray-800 fixed right-0 top-0 z-40 flex h-screen w-70 gap-6 flex-col overflow-y-auto border-l p-6 shadow dark:shadow-none max-lg:hidden ">
+    <section className="pt-30 border-gray-800  no-scrollbar flex h-full w-64 gap-6 flex-col overflow-y-auto border-l p-6 shadow dark:shadow-none  ">
         <div>
             <h3 className="font-bold text-lg  ">Top Questions</h3>
             <div className="mt-4 flex w-full flex-col gap-5 text-base">
@@ -37,7 +37,7 @@ function RightSidebar() {
             <h3>Popular Tags</h3>
             <div className="mt-7 flex flex-col gap-4 !dark:bg-white ">
                 {popularTags.map(({_id, name, questions})=> (
-                    <TagCard key={_id} _id={_id} name={name} questions={questions} showCount compact />
+                    <TagCard key={_id} _id={_id} name={name} questions={questions} showCount  />
                 ))
 
                 }

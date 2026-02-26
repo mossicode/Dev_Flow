@@ -9,8 +9,9 @@ async function LeftSidebar() {
   const session=await auth();
   const userId=session?.user.id;
   return (
-    <section className="custom-scrollbar fixed left-0 top-20 z-40 flex h-[calc(100vh-5rem)] w-64 flex-col justify-between overflow-y-auto border-r border-gray-800/70 bg-white/90 p-5 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:bg-slate-950/85 dark:shadow-none max-sm:hidden">
-      <div className="flex flex-1 flex-col gap-3">
+    <section className="flex h-full flex-col justify-between overflow-y-auto border-r border-gray-800/70 bg-white/90 p-5 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:bg-slate-950/85 dark:shadow-none max-sm:hidden">
+      <div>
+             <div className="flex flex-1 flex-col gap-3">
         <NavLinks userId={userId} />
       </div>
       {
@@ -48,6 +49,7 @@ async function LeftSidebar() {
         </>
       }
       
+      </div>
     </section>
   )
 }

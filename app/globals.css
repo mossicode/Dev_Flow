@@ -170,3 +170,12 @@
 .popupContainer_1e2ox_1240 {
   min-height: 0 !important; 
   border-color: transparent !important; }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}

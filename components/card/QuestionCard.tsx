@@ -27,7 +27,7 @@ interface Props{
                     key={tag._id} 
                     _id={tag._id}
                     name={tag.name}
-                    compact
+                    
                      />
                 ))
             }
