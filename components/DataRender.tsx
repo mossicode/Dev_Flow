@@ -48,7 +48,7 @@ export default function DataRender<T>({
   success,
   error,
   data,
-  empty={EMPTY_TAGS},
+  empty=DEFAULT_EMPTY,
   children
 }:Props<T>) {
   if(!success){
