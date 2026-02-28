@@ -11,8 +11,15 @@ export default async function Navbar() {
   } catch {
     session = null;
   }
-  const userImage = session?.user?.image || "/avatar.png";
   const userName = session?.user?.name || "User";
+  const userImage = session?.user?.image;
+  const hasProfileImage = Boolean(
+    userImage &&
+    userImage.trim() &&
+    userImage !== "/avatar.png" &&
+    !userImage.includes("placehold.co")
+  );
+  const userInitial = userName.trim().charAt(0).toUpperCase();
   const userId = session?.user?.id;
 
   return (
@@ -32,7 +39,19 @@ export default async function Navbar() {
         <div className="max-sm:hidden">
           <Theme />
         </div>
-        <Image src={userImage} alt={userName} height={35} width={35} className="rounded-full object-fit max-sm:w-6" />
+        {hasProfileImage ? (
+          <Image
+            src={userImage as string}
+            alt={userName}
+            height={35}
+            width={35}
+            className="rounded-full object-fit max-sm:w-6"
+          />
+        ) : (
+          <div className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-amber-600 text-sm font-semibold text-white max-sm:h-6 max-sm:w-6 max-sm:text-xs">
+            {userInitial}
+          </div>
+        )}
       </div>
     </div>
   )

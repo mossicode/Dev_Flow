@@ -68,7 +68,6 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
                         username,
                         name,
                         email: normalizedEmail,
-                        image: "https://placehold.co/200x200",
                     },
                 ],
                 { session }

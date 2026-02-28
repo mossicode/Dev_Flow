@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface Props{
-    imgUrl:string;
+    imgUrl?:string;
     alt:string;
     value:number | string;
     title:string;
@@ -13,10 +13,24 @@ interface Props{
 
 }
 function Metric({imgUrl, alt, value, title, href, textStyle, imgStyle, isAuthor}:Props) {
+    const hasProfileImage = Boolean(
+        imgUrl &&
+        imgUrl.trim() &&
+        imgUrl !== "/avatar.png" &&
+        !imgUrl.includes("placehold.co")
+    );
+    const fallbackInitial = String(value || alt || "U").trim().charAt(0).toUpperCase();
     const metricContent =(
         <>
-        <Image src={imgUrl} alt={alt} width={16} height={16}
+        {hasProfileImage ? (
+            <Image src={imgUrl as string} alt={alt} width={16} height={16}
             className={`rounded-full object-contain ${imgStyle}`} />
+        ) : isAuthor ? (
+            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-amber-600 text-[10px] font-semibold text-white">
+                {fallbackInitial}
+            </div>
+        ) : null
+        }
             <p className={`${textStyle} flex items-center gap-1`}>
                 {value}
                 <span className={`line-clamp-1${isAuthor?"max-sm:hidden":""}`}>{title}</span>
