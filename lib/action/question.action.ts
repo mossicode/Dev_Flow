@@ -2,12 +2,15 @@
 import mongoose from "mongoose";
 import type { ActionResponse, ErrorResponse, PaginatedSearchParams, Question as QuestionType } from "../../types/global";
 import handleError from "../handlers/error";
-import { AskQuestionSchema, PaginatedSearchParamsSchema } from "../validation";
+import { AskQuestionSchema, IncrementViewsSchema, PaginatedSearchParamsSchema } from "../validation";
 import Tag from "../../database/tag.model";
 import TagQuestion from "../../database/tag-question.model";
 import User from "../../database/user.model";
 import action from "../handlers/action";
 import Question, { IQuestion } from "../../database/question.medel";
+import { IncrementViewParams } from "../../types/action";
+import { revalidatePath } from "next/cache";
+import ROUTES from "../../constants/Route";
 
 interface CreateQuestionParams {
   title: string;
@@ -271,7 +274,7 @@ export async function getQuestions(
     const totalQuestion = await Question.countDocuments(filterquery);
     const questions = await Question.find(filterquery)
       .populate("tags", "name")
-      .populate("author", "name image")
+      .populate("author", "id name image")
       .lean()
       .sort(sortCriteria)
       .skip(skip)
@@ -285,5 +288,30 @@ export async function getQuestions(
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function incrementView(
+  params:IncrementViewParams
+):Promise<ActionResponse<{views:number}>>{
+  try {
+    const validationResult=await action({
+      params,
+      schema:IncrementViewsSchema
+    })
+    const {questionId}=validationResult.params as IncrementViewParams;
+    const question=await Question.findById(questionId);
+    if(!question){
+      throw new Error("Question not Found")
+    }
+    question.views+=1;
+    await question.save();
+    // revalidatePath(ROUTES.QUESTION(questionId))
+    return {
+      success:true,
+      data:{views:question.views}
+    }
+  } catch (error) {
+    return handleError(error) as ErrorResponse
   }
 }

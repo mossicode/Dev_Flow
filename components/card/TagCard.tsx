@@ -32,7 +32,7 @@ function TagCard({
     const showRemove = Boolean(remove && handleRemove);
     const content = <div className='w-full flex justify-between items-center gap-1'>
            <div className='flex items-center gap-1 px-4 py-1.5 border-none rounded-md uppercase text-xs bg-gray-200 text-slate-900 dark:bg-gray-900 dark:text-slate-100'>
-            <span className='font-semibold text-xs'>{name}</span>
+            <span className='font-semibold text-xs '>{name}</span>
             {showRemove && (
               <button
                 type='button'
@@ -56,7 +56,6 @@ function TagCard({
   if (!compact) {
     return (
     <Link href={ROUTES.TAG(_id)} >
-      
       {content}
     </Link>
   )

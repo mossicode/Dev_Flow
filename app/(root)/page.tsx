@@ -6,6 +6,9 @@ import Link from "next/link";
 import { getQuestions } from "../../lib/action/question.action";
 import DataRender from "../../components/DataRender";
 import { EMPTY_QUESTION } from "../../constants/states";
+import HomeRefresh from "../../components/HomeRefresh";
+
+export const dynamic = "force-dynamic";
   // const questions = [
   //   {
   //     _id:"1",
@@ -72,6 +75,7 @@ export default async function Home({searchParams}:SearchParams) {
   // });
   return (
    <>
+    <HomeRefresh />
     <section className=" px-3 flex w-full flex-col-reverse sm:flex-row sm:items-center max-sm:px-2 justify-between">
       <h1 className="font-bold mt-2">All questions</h1>
      <button className="min-h-11.5 rounded-sm max-sm:min-h-5 px-4 py-3 max-sm:py-2 max-sm:text-sm  bg-amber-700 text-gray-200">

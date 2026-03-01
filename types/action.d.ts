@@ -1,3 +1,5 @@
+import { GetTagQuestionSchema } from '../lib/validation';
+import { PaginatedSearchParams } from './global';
 export interface SignInWithOAuthParams {
     provider: "github" | "google";
     providerAccountId: string;
@@ -19,4 +21,10 @@ export interface AuthCredentials {
 export interface SignInCredentials {
     email: string;
     password: string;
+}
+export interface GetTagQuestionParams extends Omit<PaginatedSearchParams, "filter">{
+    tagId:string
+}
+interface IncrementViewParams{
+    questionId:string;
 }
