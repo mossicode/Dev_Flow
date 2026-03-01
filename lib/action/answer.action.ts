@@ -10,9 +10,9 @@ import mongoose from "mongoose";
 import { Question } from "../../database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "../../constants/Route";
-import type { IAnswer } from "../../database/answer.model";
+import type { Answer as AnswerType } from "../../types/global";
 
-export async function createAnswer(params:AnswerQuestionParams):Promise<ActionResponse<IAnswer>>{
+export async function createAnswer(params:AnswerQuestionParams):Promise<ActionResponse<AnswerType>>{
     const validationResult=await action({
         params,
         schema:AnswerQuestionSchema,
@@ -53,7 +53,7 @@ export async function createAnswer(params:AnswerQuestionParams):Promise<ActionRe
     }
 }
 export async function getAnswer(params:GetAnswerParams):Promise<ActionResponse<{
-    answers:IAnswer[];
+    answers:AnswerType[];
     isNext:boolean;
     totalAnswers:number
 
