@@ -26,7 +26,7 @@ export default async function Navbar() {
     <div className=" flex-between fixed z-50 w-full gap-5 bg-blend-lighten px-5 bg-neutral-900 py-4 max-sm:px-2 ">
       <Link href="/" className="flex items-center gap-1">
          <Image src="/logo1.png" width={23} height={23} alt="an image" />
-         <p className="font-medium  text-gray-900 dark:text-white max-sm:hidden">Dew
+         <p className="font-medium  text-gray-900 text-white max-sm:hidden">Dew
           <span className="text-amber-600 ">
               Flow
           </span>
@@ -39,7 +39,9 @@ export default async function Navbar() {
         <div className="max-sm:hidden">
           <Theme />
         </div>
-        {hasProfileImage ? (
+       
+        {session ? <>
+         {hasProfileImage ? (
           <Image
             src={userImage as string}
             alt={userName}
@@ -52,6 +54,7 @@ export default async function Navbar() {
             {userInitial}
           </div>
         )}
+        </>:""}
       </div>
     </div>
   )

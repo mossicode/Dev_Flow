@@ -23,6 +23,13 @@ export interface Question {
   views: number;
 }
 
+export interface Answer {
+  _id: string;
+  author: Author;
+  content: string;
+  createdAt: Date;
+}
+
 export type ActionResponse<T = null> = {
   success: boolean;
   data?: T;

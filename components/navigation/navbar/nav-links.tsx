@@ -32,7 +32,7 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
             )}
             key={item.label}
           >
-            <Image src={item.imgURL} alt={item.label} className='text-white invert max-md:ms-1' width={16} height={16} />
+            <Image src={item.imgURL} alt={item.label} className='dark:text-white text-gray-700 dark:invert max-md:ms-1' width={16} height={16} />
             <p className={cn("max-md:hidden",isActive ? "font-bold" : "font-light")}>{item.label}</p>
           </Link>
         )

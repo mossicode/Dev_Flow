@@ -10,6 +10,9 @@ import Preview from "../../../../components/editor/Preview";
 import { getQuestion, incrementView } from "../../../../lib/action/question.action";
 import { redirect } from "next/navigation";
 import AnswerForm from "../../../../components/forms/Answer-form";
+import { getAnswer } from "../../../../lib/action/answer.action";
+import AllAnswers from "../../../../components/answers/all-answers";
+import { success } from 'zod';
 
 
 async function QuestionDetails({params}:RouteParams) {
@@ -20,6 +23,13 @@ async function QuestionDetails({params}:RouteParams) {
   ]);
 
    if(!success || !question) return redirect("/404")
+    const {success:areAnswersLoaded, data:answerResult, error:answerError}=await getAnswer({
+     questionId:id,
+    page:1,
+    pageSize:10,
+    filter:"latest"
+    })
+    console.log("answer: ", answerResult)
   const {author, views, tags, answers, createdAt, upvotes,content, title}=question;
 
     
@@ -73,8 +83,16 @@ async function QuestionDetails({params}:RouteParams) {
             
           ))}
          </div>
+         <section>
+            <AllAnswers
+              data={answerResult?.answers}
+              success={areAnswersLoaded}
+              error={answerError}
+              totalAnswers={answerResult?.totalAnswers || 0}
+            />
+         </section>
          <div className="mt-8">
-          <AnswerForm />
+          <AnswerForm questionId={question._id} />
          </div>
     </div>
   )

@@ -12,8 +12,8 @@ export function Toaster() {
           key={t.id}
           className={`pointer-events-auto rounded-lg border px-4 py-3 shadow-lg transition-all ${
             t.variant === "destructive"
-              ? "border-red-300 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/70 dark:text-red-100"
-              : "border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
+              ? "border-red-300 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-700/70 dark:text-red-100"
+              : "border-slate-200 bg-green-500 text-green-900 dark:border-green-200 dark:bg-green-700 dark:text-slate-100"
           } ${t.open ? "opacity-100" : "opacity-0"}`}
         >
           <div className="flex items-start justify-between gap-3">

@@ -16,11 +16,16 @@ import { Button } from "../ui/button"
 import { useRef, useState, useTransition, type KeyboardEvent } from "react"
 import dynamic from "next/dynamic"
 import { Loader2Icon } from "lucide-react"
+import { createAnswer } from "../../lib/action/answer.action"
+import { toast } from "../../hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 
-export default function AnswerForm() {
-    const [isSubmitting, setSubmittting]=useState(false);
+export default function AnswerForm({questionId}:{questionId:string}) {
+    // const [isAnswering, setSubmittting]=useState(false);
+    const [isAnswering, startAnsweringTransion]=useTransition();
     const [isAISubmitting, setIsAISubmitting]=useState(false);
+    const router = useRouter();
   const editRef = useRef<MDXEditorMethods>(null)
   const Editor = dynamic(() => import("../editor"), {
     ssr: false,
@@ -34,9 +39,29 @@ export default function AnswerForm() {
   })
 
 
-const handleSubmit=async (values:z.infer<typeof AnswerSchema>) =>{
-    console.log(values)
-}
+  const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
+    startAnsweringTransion(async () => {
+      const result = await createAnswer({
+        questionId,
+        content: values.content,
+      })
+
+      if (result.success) {
+        form.reset()
+        toast({
+          title: "Answer posted successfully",
+          description: "Your answer has been posted successfully",
+        })
+        router.refresh();
+      } else {
+        toast({
+          title: "Error",
+          description: result.error?.message,
+          variant: "destructive",
+        })
+      }
+    })
+  }
   return (
     <div>
         <div className="flex flex-col justify-between gap-5 sm:flex-row">
@@ -78,7 +103,7 @@ const handleSubmit=async (values:z.infer<typeof AnswerSchema>) =>{
         />
         <div className="flex justify-end">
           <Button className="w-fit" type="submit">
-	            {isSubmitting?
+	            {isAnswering?
 	            <><Loader2Icon size={4} className="animate-spin mr-2" />Posting... </>
             :"Post Answer"}
           </Button>

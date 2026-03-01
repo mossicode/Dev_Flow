@@ -61,11 +61,13 @@ function TagCard({
   )
   } else{
     return (
-     <div className='flex size-46 justify-between border rounded-md p-4'>
-       <Link href={ROUTES.TAG(_id)}>
-         <h2 className='pb-2 font-bold text-lg '>{name}</h2>
-         <p className=''>{questionCount} questions</p>
-         {desc}
+     <div className='flex size-54 flex-col justify-between border rounded-md p-4'>
+       <Link href={ROUTES.TAG(_id)} className='flex size-48 flex-col justify-between'>
+         <div>
+          <h2 className='pb-0 font-bold text-lg '>{name}</h2>
+            <span className='ps-2 text-gray-500'>{desc}</span>
+         </div>
+         <p className=''>{questionCount} {questionCount===1?'question':"questions"}</p>
       </Link>
      </div>
     )

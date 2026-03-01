@@ -117,3 +117,9 @@ export const AnswerSchema=z.object({
   content:z.string()
   .min(20, {message:"Answer has to have more than 20 characters. "})
 })
+export const AnswerQuestionSchema=AnswerSchema.extend({
+  questionId:z.string().min(1, {message:"Question ID is required"})
+})
+export const GetAnswerQuestionSchema=PaginatedSearchParamsSchema.extend({
+  questionId:z.string().min(1, {message:"Question ID is required"})
+})
