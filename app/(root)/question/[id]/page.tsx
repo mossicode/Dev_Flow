@@ -31,16 +31,22 @@ async function QuestionDetails({params}:RouteParams) {
     })
     console.log("answer: ", answerResult)
   const {author, views, tags, answers, createdAt, upvotes,content, title}=question;
+    const initial = author?.name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
     
   return (
     <div className="w-full flex flex-col gap-y-2">
          <div className="flex justify-start items-center gap-x-2">
-          {author.image ? (
-            <Image src={author.image} alt={author.name} width={20} height={20} />
-          ) : (
-            <div className="h-5 w-5 rounded-full bg-gray-300" aria-hidden="true" />
-          )}
+         {author?.image ? (
+                              <Image src={author.image} alt={author.name} height={21} width={20} />
+                            ) : (
+                              <div
+                                className="flex h-[23px] w-[23px] items-center bg-amber-600 text-white justify-center rounded-full border border-gray-300 text-[11px] font-semibold text-gray-700"
+                                aria-label={author?.name || "User"}
+                              >
+                                {initial}
+                              </div>
+                            )}
           <span>{author.name}</span>
          </div>
          <h2>
