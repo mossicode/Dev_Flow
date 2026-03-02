@@ -1,5 +1,6 @@
 import "./globals.css";
 import ThemeProvider from "../context/Theme";
+import Session from "../context/Session";
 import { Toaster } from "../components/ui/toaster";
 
 export const metadata = {
@@ -11,10 +12,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <ThemeProvider attribute="class" defaultTheme="light">
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <Session>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </Session>
       </body>
     </html>
   );

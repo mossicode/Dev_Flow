@@ -1,6 +1,5 @@
 
 import Image from "next/image";
-import UserAvatar from "../../../../components/userAvatar"
 import { RouteParams } from "../../../../types/global"
 import Metric from "../../../../components/metric";
 import { formatNumber, getTimeStamp } from "../../../../lib/utils";
@@ -12,8 +11,7 @@ import { redirect } from "next/navigation";
 import AnswerForm from "../../../../components/forms/Answer-form";
 import { getAnswer } from "../../../../lib/action/answer.action";
 import AllAnswers from "../../../../components/answers/all-answers";
-import { success } from 'zod';
-
+import Vote from "../../../../components/votes/vote";
 
 async function QuestionDetails({params}:RouteParams) {
   const {id}= await params
@@ -30,14 +28,15 @@ async function QuestionDetails({params}:RouteParams) {
     filter:"latest"
     })
     console.log("answer: ", answerResult)
-  const {author, views, tags, answers, createdAt, upvotes,content, title}=question;
+  const {author, views, tags, answers, createdAt, upvotes,content, title, downvotes}=question;
     const initial = author?.name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
     
   return (
     <div className="w-full flex flex-col gap-y-2">
-         <div className="flex justify-start items-center gap-x-2">
-         {author?.image ? (
+        <div className="flex justify-between">
+            <div className="flex justify-start items-center gap-x-2">
+                {author?.image ? (
                               <Image src={author.image} alt={author.name} height={21} width={20} />
                             ) : (
                               <div
@@ -47,8 +46,10 @@ async function QuestionDetails({params}:RouteParams) {
                                 {initial}
                               </div>
                             )}
-          <span>{author.name}</span>
-         </div>
+                <span>{author.name}</span>
+            </div>
+         <div><Vote upVotes={question.upvotes} hasUpVotes={true} downVotes={downvotes} hasdownVotes={false} /></div>
+        </div>
          <h2>
           {title}
          </h2>
@@ -98,7 +99,7 @@ async function QuestionDetails({params}:RouteParams) {
             />
          </section>
          <div className="mt-8">
-          <AnswerForm questionId={question._id} />
+          <AnswerForm questionId={question._id} questionTitle={question.title} questionContent={question.content} />
          </div>
     </div>
   )

@@ -2,7 +2,7 @@
 import { MDXEditorMethods } from "@mdxeditor/editor"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { z, success } from 'zod';
 import { AnswerSchema, AskQuestionSchema } from "../../lib/validation"
 import {
   Form,
@@ -19,12 +19,21 @@ import { Loader2Icon } from "lucide-react"
 import { createAnswer } from "../../lib/action/answer.action"
 import { toast } from "../../hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { api } from "../../lib/api"
 
+interface Props{
+  questionId:string;
+  questionTitle:string;
+  questionContent:string;
 
-export default function AnswerForm({questionId}:{questionId:string}) {
+}
+
+export default function AnswerForm({questionId, questionTitle,questionContent }:Props) {
     // const [isAnswering, setSubmittting]=useState(false);
     const [isAnswering, startAnsweringTransion]=useTransition();
     const [isAISubmitting, setIsAISubmitting]=useState(false);
+    const session=useSession();
     const router = useRouter();
   const editRef = useRef<MDXEditorMethods>(null)
   const Editor = dynamic(() => import("../editor"), {
@@ -52,6 +61,9 @@ export default function AnswerForm({questionId}:{questionId:string}) {
           title: "Answer posted successfully",
           description: "Your answer has been posted successfully",
         })
+        if(editRef.current){
+          editRef.current.setMarkdown("");
+        }
         router.refresh();
       } else {
         toast({
@@ -62,13 +74,56 @@ export default function AnswerForm({questionId}:{questionId:string}) {
       }
     })
   }
+  const generateAIAnswer=async ()=>{
+    if(session.status !== "authenticated"){
+      return toast({
+        title:"Please log in",
+        description:"You need to be logged in to use this feature"
+      });
+      
+      }
+      setIsAISubmitting(true);
+      try {
+       const {success, data, error}= await api.ai.getAnswer(questionTitle, questionContent);
+       if(!success){
+        return toast({
+          title:"Error",
+          description:error.message,
+          variant:"destructive"
+        })
+       }
+       const formatedAnwer=data.replace(/<br>/g, "").toString().trim();
+       if(editRef.current){
+        editRef.current.setMarkdown(formatedAnwer);
+        form.setValue("content", formatedAnwer);
+        form.trigger("content");
+       }
+       toast({
+        title:"Success",
+        description:"AI generated answer has been generated"
+       })
+      } catch (error) {
+        toast({
+          title:"Error",
+          description:error instanceof Error?error.message:"There was a problem with your request",
+          variant:"destructive"
+        })
+      }finally{
+        setIsAISubmitting(false);
+      }
+    
+  }
   return (
     <div>
         <div className="flex flex-col justify-between gap-5 sm:flex-row">
            <div className="w-full">
              <h4 className="font-semibold ">Write your answer here</h4>
           <div className="mx-auto text-center">
-              <Button className="btn px-8 rounded-md border mx-auto text-orange-500 font-bold gap-1.5 bg-dark hover:bg-border py-2.5 shadow-none" disabled={isAISubmitting}>
+              <Button
+               className="btn px-8 rounded-md border mx-auto text-orange-500 font-bold gap-1.5 bg-dark hover:bg-border py-2.5 shadow-none" 
+               disabled={isAISubmitting}
+               onClick={generateAIAnswer}
+               >
 	                 {isAISubmitting?
 	                <><Loader2Icon size={4} className="animate-spin mr-2" />Generating... </>
                  :

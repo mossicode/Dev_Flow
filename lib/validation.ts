@@ -123,3 +123,18 @@ export const AnswerQuestionSchema=AnswerSchema.extend({
 export const GetAnswerQuestionSchema=PaginatedSearchParamsSchema.extend({
   questionId:z.string().min(1, {message:"Question ID is required"})
 })
+export const AIAnswerSchema=z.object({
+  question:z.string().min(5, {message:"Question must be more than 5 character"}).max(100, {message:"Question must be less than 100 characters"}),
+  content:z.string().min(20,{message:"Answer must be more than characters. "})
+})
+export const CreateVoteSchema=z.object({
+  targetId:z.string().min(1, {message:"Target ID is required"}),
+  targetType:z.enum(['question', "answer"], {message:"Invalid target Type"}),
+  voteType:z.enum(["upvote", "downvote"], {message:"Invalid vote type"})
+})
+export const UpdateVoteCountSchema = CreateVoteSchema.extend({
+  change: z
+    .number()
+    .int()
+    .refine((value) => value === 1 || value === -1, { message: "Invalid change value" }),
+})

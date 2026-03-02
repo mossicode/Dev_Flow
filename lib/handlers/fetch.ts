@@ -9,7 +9,7 @@ function isError(error:unknown):error is Error{
     return error instanceof Error;
 }
 export async function fetchHandler<T>(url:string, options:fetchOption ={}):Promise<ActionResponse<T>>{
-    const {timeout=5000, headers:customHeaders={}, ...restOption}=options;
+    const {timeout=100000, headers:customHeaders={}, ...restOption}=options;
     const controller=new AbortController();
     const id = setTimeout(()=> controller.abort(), timeout);
     const defaultHeaders:HeadersInit={
@@ -26,7 +26,22 @@ export async function fetchHandler<T>(url:string, options:fetchOption ={}):Promi
         const response=await fetch(url, config)
         clearTimeout(id)
         if(!response.ok){
-            throw new RequestError(response.status, `HTTP error: ${response.status}`)
+            let message = `HTTP error: ${response.status}`;
+            let details: Record<string, string[]> | undefined;
+
+            try {
+                const errorPayload = await response.json();
+                if (errorPayload?.error?.message) {
+                    message = errorPayload.error.message;
+                }
+                if (errorPayload?.error?.details) {
+                    details = errorPayload.error.details;
+                }
+            } catch {
+                // Keep generic fallback message when body is not valid JSON.
+            }
+
+            throw new RequestError(response.status, message, details)
         }
         return await response.json();
     } catch (err) {

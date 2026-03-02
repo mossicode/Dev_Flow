@@ -11,7 +11,7 @@ function AnswerCard({ _id, author, content, createdAt }: Answer) {
             <div className="flex items-center ">
                 <div className="flex items-center gap-x-1.5">                    
                     {author?.image ? (
-                      <Image src={author.image} alt={author.name} height={21} width={20} />
+                      <Image src={author.image} alt={author.name} className='rounded-full object-cover' height={23} width={23} />
                     ) : (
                       <div
                         className="flex h-[23px] w-[23px] items-center bg-amber-600 text-white justify-center rounded-full border border-gray-300 text-[11px] font-semibold text-gray-700"

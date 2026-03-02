@@ -4,6 +4,15 @@ import { ZodError } from "zod";
 
 export type ResponseType= 'api' | 'server';
 
+export interface ServerErrorResponse {
+    status: number;
+    success: false;
+    error: {
+        message: string;
+        details?: Record<string, string[]>;
+    };
+}
+
 const getHumanReadableErrorMessage = (error: Error): string => {
     const rawMessage = error.message || "";
     const errorCode = (error as Error & { code?: string }).code;
@@ -25,25 +34,27 @@ const getHumanReadableErrorMessage = (error: Error): string => {
     return rawMessage || "An unexpected error occured";
 };
 
-const formatResponse=(
-    responseType:ResponseType,
-    status:number,
-    message:string,
-    errors?:Record<string, string[]> | undefined,
-)=> {
-    const responseContent={
-        success : false,
-        error:{
+const formatResponse = (
+    responseType: ResponseType,
+    status: number,
+    message: string,
+    errors?: Record<string, string[]> | undefined
+): NextResponse | ServerErrorResponse => {
+    const responseContent = {
+        success: false as const,
+        error: {
             message,
-            details:errors,
+            details: errors,
         },
     };
-    return responseType ==="api"
-    ?NextResponse.json(responseContent, {status})
-    : {status, ...responseContent}
-}
+    return responseType === "api"
+        ? NextResponse.json(responseContent, { status })
+        : { status, ...responseContent };
+};
 
-const handleError=(error:unknown, responseType:ResponseType="server")=>{
+function handleError(error: unknown, responseType: "api"): NextResponse;
+function handleError(error: unknown, responseType?: "server"): ServerErrorResponse;
+function handleError(error: unknown, responseType: ResponseType = "server") {
     if(error instanceof RequestError){
         return formatResponse(
             responseType, 
@@ -53,7 +64,7 @@ const handleError=(error:unknown, responseType:ResponseType="server")=>{
         )
     }
     if(error instanceof ZodError){
-        const validationError = new ValidationError(error.flatten().fieldErrors as Record<string, string[]>)
+        const validationError = new ValidationError(error.flatten().fieldErrors)
         return formatResponse(
             responseType,
             validationError.statusCode,
