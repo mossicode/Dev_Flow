@@ -24,7 +24,7 @@ type Action =
   | { type: "REMOVE_TOAST"; toastId?: string };
 
 const TOAST_LIMIT = 3;
-const TOAST_REMOVE_DELAY = 3000;
+const TOAST_DURATION = 4000;
 
 let count = 0;
 const genId = () => {
@@ -34,13 +34,13 @@ const genId = () => {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-const addToRemoveQueue = (toastId: string) => {
+const addToRemoveQueue = (toastId: string, delay = TOAST_DURATION) => {
   if (toastTimeouts.has(toastId)) return;
 
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId);
     dispatch({ type: "REMOVE_TOAST", toastId });
-  }, TOAST_REMOVE_DELAY);
+  }, delay);
 
   toastTimeouts.set(toastId, timeout);
 };
@@ -56,15 +56,25 @@ const reducer = (state: ToastState, action: Action): ToastState => {
     case "DISMISS_TOAST": {
       const { toastId } = action;
 
-      if (toastId) addToRemoveQueue(toastId);
-      else state.toasts.forEach((toast) => addToRemoveQueue(toast.id));
+      if (toastId) {
+        const timeout = toastTimeouts.get(toastId);
+        if (timeout) {
+          clearTimeout(timeout);
+          toastTimeouts.delete(toastId);
+        }
+        addToRemoveQueue(toastId, 0);
+      } else {
+        state.toasts.forEach((toast) => {
+          const timeout = toastTimeouts.get(toast.id);
+          if (timeout) {
+            clearTimeout(timeout);
+            toastTimeouts.delete(toast.id);
+          }
+          addToRemoveQueue(toast.id, 0);
+        });
+      }
 
-      return {
-        ...state,
-        toasts: state.toasts.map((toast) =>
-          toastId ? (toast.id === toastId ? { ...toast, open: false } : toast) : { ...toast, open: false }
-        ),
-      };
+      return state;
     }
 
     case "REMOVE_TOAST":
@@ -94,8 +104,10 @@ export function toast(input: ToastInput) {
     
   dispatch({
     type: "ADD_TOAST",
-    toast: { ...input, id, open: true },
+    toast: { ...input, id },
   });
+
+  addToRemoveQueue(id, TOAST_DURATION);
 
   return { id, dismiss };
 }

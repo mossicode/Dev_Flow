@@ -138,3 +138,11 @@ export const UpdateVoteCountSchema = CreateVoteSchema.extend({
     .int()
     .refine((value) => value === 1 || value === -1, { message: "Invalid change value" }),
 })
+export const HasVoteSchema=CreateVoteSchema.pick({
+  targetId:true,
+  targetType:true
+})
+
+export const CollectionBaseSchema=z.object({
+  questionId:z.string().min(1, {message:"Question ID is required. "})
+})

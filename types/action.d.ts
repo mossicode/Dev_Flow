@@ -47,3 +47,12 @@ export interface CreateVoteParams{
 export interface UpdatedVoteCountParams extends CreateVoteParams{
     change:1 | -1
 }
+
+export type HasVoteParams=Pick<CreateVoteParams, "targetId" | "targetType">;
+export interface HasVoteResponse {
+    hasUpvoted:boolean,
+    hasDownvoted:boolean
+}
+export interface CollectionBaseParams{
+    questionId:string;
+}

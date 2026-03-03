@@ -12,6 +12,10 @@ import AnswerForm from "../../../../components/forms/Answer-form";
 import { getAnswer } from "../../../../lib/action/answer.action";
 import AllAnswers from "../../../../components/answers/all-answers";
 import Vote from "../../../../components/votes/vote";
+import { hasVoted } from "../../../../lib/action/vote.action";
+import { Suspense } from "react";
+import SaveQuestion from "../../../../components/questions/save-question";
+import { hasSavedQuestion } from "../../../../lib/action/collection.action";
 
 async function QuestionDetails({params}:RouteParams) {
   const {id}= await params
@@ -27,8 +31,14 @@ async function QuestionDetails({params}:RouteParams) {
     pageSize:10,
     filter:"latest"
     })
-    console.log("answer: ", answerResult)
-  const {author, views, tags, answers, createdAt, upvotes,content, title, downvotes}=question;
+    const hasVotedPromise=hasVoted({
+      targetId:question._id,
+      targetType:"question"
+    })
+    const hasSavedQuestionPromise=hasSavedQuestion({
+      questionId:question._id
+    })
+    const {author, views, tags, answers, createdAt, upvotes,content, title, downvotes}=question;
     const initial = author?.name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
     
@@ -48,7 +58,21 @@ async function QuestionDetails({params}:RouteParams) {
                             )}
                 <span>{author.name}</span>
             </div>
-         <div><Vote upVotes={question.upvotes} hasUpVotes={true} downVotes={downvotes} hasdownVotes={false} /></div>
+         <div className="flex gap-x-2">
+          <Suspense fallback={<div>Loading...</div>}>
+             <Vote
+             upVotes={question.upvotes} 
+             targetType="question"
+             downVotes={downvotes} 
+              targetId={question._id}
+             hasVotedPromise={hasVotedPromise}
+             />
+          </Suspense>
+          <Suspense fallback={<div>loading...</div>}>
+                <SaveQuestion hasSavedQuestionPromise={hasSavedQuestionPromise} questionId={question._id} />
+          </Suspense>
+         
+          </div>
         </div>
          <h2>
           {title}

@@ -91,7 +91,9 @@ export function QuesitonForm({ question, isEdit = false }: Params) {
             ? "Your question was updated successfully."
             : "Your question was submitted successfully.",
         })
-        router.push(ROUTES.QUESTION(result.data._id))
+        setTimeout(() => {
+          router.push(ROUTES.QUESTION(result.data._id))
+        }, 300)
         return
       }
 

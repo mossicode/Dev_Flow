@@ -1,12 +1,14 @@
 "use server"
 
 import { ActionResponse, ErrorResponse } from "../../types/global";
-import { CreateVoteParams, UpdatedVoteCountParams } from "../../types/action";
+import { CreateVoteParams, HasVoteResponse, UpdatedVoteCountParams, HasVoteParams } from "../../types/action";
 import action from "../handlers/action";
-import { CreateVoteSchema, UpdateVoteCountSchema } from "../validation";
+import { CreateVoteSchema, HasVoteSchema, UpdateVoteCountSchema } from "../validation";
 import handleError from "../handlers/error";
 import mongoose, { ClientSession } from "mongoose";
 import { Answer, Question, Vote } from "../../database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "../../constants/Route";
 
 async function updatedVoteCount({
     params,
@@ -42,7 +44,7 @@ async function updatedVoteCount({
     }
 }
 
-async function createVote({ params }: { params: CreateVoteParams }): Promise<ActionResponse> {
+export async function createVote(params: CreateVoteParams): Promise<ActionResponse> {
     const validationResult = await action({
         params,
         schema: CreateVoteSchema,
@@ -102,12 +104,61 @@ async function createVote({ params }: { params: CreateVoteParams }): Promise<Act
             });
         }
 
+        const revalidateQuestionId =
+            targetType === "question"
+                ? targetId
+                : (await Answer.findById(targetId).select("question").lean())?.question?.toString();
+
         await session.commitTransaction();
+        if (revalidateQuestionId) {
+            revalidatePath(ROUTES.QUESTION(revalidateQuestionId));
+        }
         return { success: true };
     } catch (error) {
         await session.abortTransaction();
         return handleError(error) as ErrorResponse;
     } finally {
         session.endSession();
+    }
+}
+
+export async function hasVoted(params: HasVoteParams): Promise<ActionResponse<HasVoteResponse>> {
+    const validtationResult=await action({
+        params,
+        schema:HasVoteSchema,
+        authorize:false
+    })
+    if(validtationResult instanceof Error){
+        return handleError(validtationResult) as ErrorResponse;
+    }
+    const {targetId, targetType} =validtationResult.params!;
+    const userId=validtationResult.session?.user?.id;
+    if(!userId){
+        return {
+            success:true,
+            data:{hasUpvoted:false, hasDownvoted:false}
+        };
+    }
+    try {
+        const vote=await Vote.findOne({
+            author:userId,
+            id:targetId,
+            type:targetType
+        })
+        if(!vote){
+            return {
+                success:true,
+                data:{hasUpvoted:false, hasDownvoted:false}
+            }
+        }
+        return {
+            success:true,
+            data:{
+                hasUpvoted:vote.voteType==="upvote",
+                hasDownvoted:vote.voteType==="downvote",
+             }
+        }
+    } catch (error) {
+        return handleError(error) as ErrorResponse
     }
 }

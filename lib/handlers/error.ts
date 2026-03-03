@@ -24,7 +24,7 @@ const getHumanReadableErrorMessage = (error: Error): string => {
         combined.includes("getaddrinfo") ||
         combined.includes("mongodb")
     ) {
-        return "Database connection failed. Please check your internet connection and MongoDB host configuration, then try again.";
+        return "Database connection failed. Please check your internet connection.";
     }
 
     if (combined.includes("etimedout") || combined.includes("timeout")) {

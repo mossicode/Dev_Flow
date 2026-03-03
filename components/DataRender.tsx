@@ -37,7 +37,7 @@ const StateSkeleton=({image, title, message, button}:StateSkeletonProps)=>{
       <>
         <Image src={image.dark} alt={image.alt} height={200} width={200} className='hidden dark:block' />
         <Image src={image.light} alt={image.alt} height={200} width={200} className='block dark:hidden' />
-        <h2 className='font-bold w-full text-wrap'>{title}</h2>
+        <h2 className='font-bold w-full text-wrap text-center'>{title}</h2>
         <p className='text-gray-400 text-center'>{message}</p>
         {button && <Link href={button.href}><button className='bg-white text-black mb-5 px-3 py-1 rounded-sm font-serif'>{button.text}</button></Link>}
       </>

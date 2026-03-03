@@ -64,7 +64,9 @@ export default function AnswerForm({questionId, questionTitle,questionContent }:
         if(editRef.current){
           editRef.current.setMarkdown("");
         }
-        router.refresh();
+        setTimeout(() => {
+          router.refresh();
+        }, 300);
       } else {
         toast({
           title: "Error",

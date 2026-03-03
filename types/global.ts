@@ -23,12 +23,14 @@ export interface Question {
   answers: number;
   views: number;
 }
-
+ 
 export interface Answer {
   _id: string;
   author: Author;
   content: string;
   createdAt: Date;
+  upvotes:number;
+  downvotes:number
 }
 
 export type ActionResponse<T = null> = {
@@ -57,4 +59,16 @@ export interface PaginatedSearchParams {
   query?: string;
   filter?: string;
   sort?: string;
+}
+
+export interface User {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portfolio?: string;
+  reputation?: number;
 }

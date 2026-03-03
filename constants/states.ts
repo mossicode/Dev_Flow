@@ -41,3 +41,8 @@ export const EMPTY_TAGS={
         href:ROUTES.TAGS
     }
 }
+export const EMPTY_USERS={
+    title:"No User Found. ",
+    message:"You are alone.",
+   
+}

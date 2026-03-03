@@ -9,6 +9,7 @@ const ROUTES ={
     JOBS:"jobs",
     QUESTION:(id:string)=>`/question/${id}`,
     PROFILE:(id:string)=>`/profile/${id}`,
-    TAG:(id:string)=>`/tag/${id}`
+    TAG:(id:string)=>`/tag/${id}`,
+    QUESTION_DETAILS:(questionId:string)=>`/question/${questionId}`
 }
 export default ROUTES;

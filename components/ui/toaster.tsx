@@ -14,7 +14,7 @@ export function Toaster() {
             t.variant === "destructive"
               ? "border-red-300 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-700/70 dark:text-red-100"
               : "border-slate-200 bg-green-500 text-green-900 dark:border-green-200 dark:bg-green-700 dark:text-slate-100"
-          } ${t.open ? "opacity-100" : "opacity-0"}`}
+          } opacity-100`}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
