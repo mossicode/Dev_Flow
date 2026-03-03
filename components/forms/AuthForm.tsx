@@ -42,8 +42,12 @@
       const result = await onSubmit(data) as ActionResponse;
       if (result?.success) {
         form.reset();
-        router.push("/");
+        router.replace("/");
         router.refresh();
+        // Fallback for environments where client router navigation is skipped.
+        if (typeof window !== "undefined") {
+          window.location.assign("/");
+        }
         return;
       }
 
