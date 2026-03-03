@@ -1,5 +1,4 @@
 'use client'
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import React, { use, useState } from 'react'
 import { toast } from '../../hooks/use-toast';
@@ -16,20 +15,10 @@ interface Props{
 }
 function Vote({hasVotedPromise, upVotes,  downVotes,  targetType, targetId}:Props) {
     const [isLoading, setIsLoading]=useState(false);
-    const session=useSession();
-    const isAuthenticated = session.status === "authenticated";
-    const {success, data}=use(hasVotedPromise)
+    const {data}=use(hasVotedPromise)
     const {hasUpvoted, hasDownvoted}=data|| {};
     const handleVote=async (voteType:'upvote'| 'downvote')=>{
-         if (session.status === "loading") {
-            return;
-         }
-         if (!isAuthenticated) {
-            return toast({
-                title:"Please login to vote",
-                description:"Only logged ueser can vote"
-            })
-         }
+         if (isLoading) return;
          setIsLoading(true);
          try {
             const result=await createVote({
@@ -38,9 +27,12 @@ function Vote({hasVotedPromise, upVotes,  downVotes,  targetType, targetId}:Prop
                 voteType
             })
             if(!result.success){
+                const errorMessage = result.error?.message || "An Error accured while voting";
+                const isUnauthorized =
+                    result.status === 401 || /unauthorized/i.test(errorMessage);
                 return toast({
-                    title:"Failed to vote",
-                    description:result.error?.message || "An Error accured while voting",
+                    title: isUnauthorized ? "Please login to vote" : "Failed to vote",
+                    description: isUnauthorized ? "Only logged user can vote" : errorMessage,
                     variant:"destructive"
                 })
             }
@@ -62,7 +54,7 @@ function Vote({hasVotedPromise, upVotes,  downVotes,  targetType, targetId}:Prop
     <div className='flex items-center justify-center gap-3'>
         <div className='flex gap-x-1.5'>
             <Image src="/up.png" height={16} width={16} alt='up' 
-                className={cn('cursor-pointer  ', success?"dark:invert  text-green-500 font-extrabold":"text-white dark:invert bg-transparent")}
+                className={cn('cursor-pointer  ', hasUpvoted ? "dark:invert  text-green-500 font-extrabold" : "text-white dark:invert bg-transparent")}
                 onClick={()=>!isLoading && handleVote('upvote')}
                 />
                 {upVotes}
@@ -70,7 +62,7 @@ function Vote({hasVotedPromise, upVotes,  downVotes,  targetType, targetId}:Prop
         <div className='flex gap-x-1.5'>
             
             <Image src="/down.png"  height={16} width={16} alt='up' 
-                className='cursor-pointer dark:invert text-white font-extrabold'
+                className={cn('cursor-pointer dark:invert text-white font-extrabold', hasDownvoted && "text-green-500")}
                 onClick={()=>!isLoading && handleVote('downvote')}
                 />
                 {downVotes}

@@ -9,6 +9,7 @@ import mongoose, { ClientSession } from "mongoose";
 import { Answer, Question, Vote } from "../../database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "../../constants/Route";
+import { auth } from "../../auth";
 
 async function updatedVoteCount({
     params,
@@ -132,7 +133,8 @@ export async function hasVoted(params: HasVoteParams): Promise<ActionResponse<Ha
         return handleError(validtationResult) as ErrorResponse;
     }
     const {targetId, targetType} =validtationResult.params!;
-    const userId=validtationResult.session?.user?.id;
+    const session = await auth();
+    const userId=session?.user?.id;
     if(!userId){
         return {
             success:true,
