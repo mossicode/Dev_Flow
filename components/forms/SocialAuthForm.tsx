@@ -17,7 +17,7 @@ export default function SocialAuthForm() {
       })
       } catch(error){
         console.log(error)
-        alert("fialed")
+        
       }
     }
   return (

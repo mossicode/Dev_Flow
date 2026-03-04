@@ -77,7 +77,7 @@ import { useState } from "react";
                 <FormItem className="">
                   <FormLabel className="">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your name" {...field} />
+                    <Input disabled={isLoading}  placeholder="Enter your name" {...field} />
                   </FormControl>
                   <FormMessage className="" />
                 </FormItem>
@@ -94,7 +94,7 @@ import { useState } from "react";
                 <FormItem className="">
                   <FormLabel className="">Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your username" {...field} />
+                    <Input placeholder="Enter your username" disabled={isLoading}  {...field} />
                   </FormControl>
                   <FormMessage className="" />
                 </FormItem>
@@ -111,7 +111,7 @@ import { useState } from "react";
                 <FormItem className="">
                   <FormLabel className="">Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Enter your email" {...field} />
+                    <Input type="email" disabled={isLoading}  placeholder="Enter your email" {...field} />
                   </FormControl>
                   <FormMessage className="" />
                 </FormItem>
@@ -128,7 +128,7 @@ import { useState } from "react";
                 <FormItem className="">
                   <FormLabel className="">Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter your password" {...field} />
+                    <Input type="password" disabled={isLoading} placeholder="Enter your password" {...field} />
                   </FormControl>
                   <FormMessage className="" />
                 </FormItem>

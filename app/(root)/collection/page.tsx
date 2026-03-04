@@ -9,6 +9,8 @@ import QuestionCard from "../../../components/card/QuestionCard";
 import { EMPTY_QUESTION } from "../../../constants/states";
 import Link from "next/link";
 import { getSavedQuestion } from "../../../lib/action/collection.action";
+import { auth } from "../../../auth";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +19,11 @@ export const dynamic = "force-dynamic";
   }
 
 export default async function Home({searchParams}:SearchParams) {  
+  const session = await auth();
+  if (!session) {
+    redirect(ROUTES.SIGN_IN);
+  }
+
   const {page, pageSize, query, filter}=await searchParams;
   const {success, data, error}=await getSavedQuestion({
     page:Number(page) || 1,
