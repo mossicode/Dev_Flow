@@ -17,6 +17,7 @@
   import { Input } from "../ui/input";
   import { Button } from "../ui/button";
   import { ActionResponse } from "../../types/global";
+import { useState } from "react";
 
   interface AuthFormProps<T extends FieldValues> {
     schema: ZodType<T>;
@@ -31,6 +32,7 @@
     defaultValues,
     onSubmit,
   }: AuthFormProps<T>) {
+    const [isLoading, setIsLoading]=useState(false);
     const router = useRouter();
 
     const form = useForm<T>({
@@ -39,11 +41,12 @@
     });
 
     const handleSubmit: SubmitHandler<T> = async (data) => {
+      setIsLoading(true)
       const result = await onSubmit(data) as ActionResponse;
       if (result?.success) {
-        form.reset();
+        
         router.replace("/");
-        router.refresh();
+        
         // Fallback for environments where client router navigation is skipped.
         if (typeof window !== "undefined") {
           window.location.assign("/");
@@ -54,6 +57,7 @@
       form.setError("root", {
         message: result?.error?.message ?? "Something went wrong. Please try again.",
       });
+      setIsLoading(false);
     };
 
     const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
@@ -138,9 +142,15 @@
             
           <Button
             type="submit"
+            disabled={isLoading}
             className="hover:bg-orange-400 text-white bg-orange-500 w-30 transition"
           >
-            {buttonText}
+            {isLoading ? (
+  <span>{formType === "SIGN_IN" ? "Signing in..." : "Signing up..."}</span>
+) : (
+  buttonText
+)}
+
           </Button>
           </div>
         </form>

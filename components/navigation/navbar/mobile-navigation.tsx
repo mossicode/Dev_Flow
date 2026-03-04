@@ -24,7 +24,7 @@ export default function MobileNavigation({ userId }: { userId?: string }) {
       <SheetTitle className="hidden">Navigation</SheetTitle>
       {/* <SheetDescription className="">This action cannot be undone.</SheetDescription> */}
        <Link href="/" className="flex items-center gap-1 pt-4 ps-4">
-       <Image src="/logo.png" alt="logo" width={20} height={20} /> 
+       <Image src="/logo1.png" alt="logo" width={30} height={30} /> 
        <p className="font-medium  text-gray-900 dark:text-white ">Dew
           <span className="text-amber-600">
               Flow
@@ -41,7 +41,7 @@ export default function MobileNavigation({ userId }: { userId?: string }) {
                 <SheetClose asChild >
                     
                     <Link href={ROUTES.SIGN_IN} >
-                       <button className="w-full  p-1.5 text-xs bg-gray-900 rounded-sm">
+                       <button className="w-full  p-2 text-gray-100 font-bold bg-gray-900 rounded-sm">
                            <span className="">Log in</span>
                        </button>
                     </Link>

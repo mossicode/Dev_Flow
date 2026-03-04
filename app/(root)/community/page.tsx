@@ -10,13 +10,12 @@ import UserCard from '../../../components/card/user-card';
 async function page({searchParams}:RouteParams) {
   const {page, pageSize, query, filter}=await searchParams;
   const {success, data, error}=await getUser({
-    page:Number(page) | 1,
-    pageSize:Number(pageSize) | 10,
+    page:Number(page) || 1,
+    pageSize:Number(pageSize) || 10,
     query,
     filter
   })
-  const {users}=data || {};
-  console.log(users)
+  const users = data?.users ?? [];
 
   return (
     <div>

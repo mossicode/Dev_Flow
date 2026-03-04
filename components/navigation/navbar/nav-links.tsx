@@ -12,7 +12,7 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
   const pathName = usePathname()
 
   return (
-    <div>
+    <div className=''>
       {sidebrarLinks.map((item) => {
         const href = item.label === "profile"
           ? (userId ? ROUTES.PROFILE(userId) : ROUTES.SIGN_IN)
@@ -27,13 +27,15 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
             href={href}
             className={cn(
               "px-3 rounded-lg cursor-pointer no-scrollbar transition-colors duration-500 ease-in-out",
-              isActive ? "bg-indigo-950 text-white shadow-md shadow-indigo-400/50" : "bg-transparent text-gray-700 dark:text-gray-300",
+              isActive ? "bg-chart-5" : "text-orange-700",
               "flex items-center justify-start gap-3 p-1.5"
             )}
             key={item.label}
           >
-            <Image src={item.imgURL} alt={item.label} className='dark:text-white text-gray-700 dark:invert max-md:ms-1' width={16} height={16} />
-            <p className={cn("max-md:hidden",isActive ? "font-bold text-black" : "font-light text-black")}>{item.label}</p>
+            <Image src={item.imgURL} alt={item.label} className='dark:invert max-md:ms-1 text-black' width={16} height={16} />
+            <p className={cn("",isActive ? "font-bold text-white" : "font-light dark:text-white text-black",
+              isMobileNav?"":"max-md:hidden"
+            )}>{item.label}</p>
           </Link>
         )
 

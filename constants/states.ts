@@ -46,3 +46,8 @@ export const EMPTY_USERS={
     message:"You are alone.",
    
 }
+export const EMPTY_COLLECTION={
+    title:"Ahh, NO saved question yet",
+    message:"You dont have any saved question up to now.",
+   
+}

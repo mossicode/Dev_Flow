@@ -23,9 +23,9 @@ async function LeftSidebar() {
               "use server";
               await signOut();
             }
-          } className="flex gap-x-2 mt-3">
-            <LogOutIcon />
-            <button type="submit" className="text-gray-400">Logout</button>
+          } className="flex gap-x-2 mt-24 border-t pt-4 ">
+            <LogOutIcon className="ps-2 text-gray-500" />
+            <button type="submit" className="text-gray-800">Log out</button>
           </form>
         </>
         :

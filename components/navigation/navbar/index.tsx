@@ -34,13 +34,10 @@ export default async function Navbar() {
       </Link>
       <p className="text-nowrap text-white">Global Search</p>
       <div className="flex gap-x-2 items-center ">
-        <MobileNavigation userId={userId} />
-
         <div className="max-sm:hidden">
           <Theme />
         </div>
-       
-        {session ? <>
+         {session ? <>
          {hasProfileImage ? (
           <Image
             src={userImage as string}
@@ -55,6 +52,10 @@ export default async function Navbar() {
           </div>
         )}
         </>:""}
+        <MobileNavigation userId={userId} />
+
+       
+       
       </div>
     </div>
   )
