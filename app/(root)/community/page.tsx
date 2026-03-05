@@ -6,16 +6,21 @@ import ROUTES from '../../../constants/Route';
 import DataRender from '../../../components/DataRender';
 import { EMPTY_USERS } from '../../../constants/states';
 import UserCard from '../../../components/card/user-card';
+import CommonFilter from '../../../components/filter/common-filter';
+import { UserFilters } from '../../../constants/filters';
+import Pagination from '../../../components/paginate/pagination';
 
 async function page({searchParams}:RouteParams) {
   const {page, pageSize, query, filter}=await searchParams;
+  const currentPage = Number(page) || 1;
   const {success, data, error}=await getUser({
-    page:Number(page) || 1,
+    page:currentPage,
     pageSize:Number(pageSize) || 10,
     query,
     filter
   })
   const users = data?.users ?? [];
+  const isNext = Boolean(data?.isNext);
 
   return (
     <div>
@@ -26,6 +31,7 @@ async function page({searchParams}:RouteParams) {
             placeholder='Search developers'
             route={ROUTES.COMMUNITY}
           />
+          <CommonFilter filters={UserFilters} />
 
           <DataRender data={users} success={success} error={error} empty={EMPTY_USERS}>
              <div className='flex flex-wrap gap-5' >
@@ -35,6 +41,7 @@ async function page({searchParams}:RouteParams) {
             ))}
             </div>
           </DataRender>
+          <Pagination page={currentPage} isNext={isNext} containerClasses='mt-6' />
 
         </div>
     </div>

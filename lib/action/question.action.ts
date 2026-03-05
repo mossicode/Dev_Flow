@@ -7,10 +7,9 @@ import Tag from "../../database/tag.model";
 import TagQuestion from "../../database/tag-question.model";
 import User from "../../database/user.model";
 import action from "../handlers/action";
-import Question, { IQuestion } from "../../database/question.medel";
+import Question from "../../database/question.medel";
 import { IncrementViewParams } from "../../types/action";
-import { revalidatePath } from "next/cache";
-import ROUTES from "../../constants/Route";
+import { connectDB } from "../mongodb";
 
 interface CreateQuestionParams {
   title: string;
@@ -313,5 +312,21 @@ export async function incrementView(
     }
   } catch (error) {
     return handleError(error) as ErrorResponse
+  }
+}
+
+export async function getHotQuestions():Promise<ActionResponse<QuestionType[]>>{
+  try {
+    await connectDB();
+    const questions=await Question.find()
+      .sort({views:-1, upvotes:-1})
+      .limit(5);
+      return {
+        success:true,
+        data:JSON.parse(JSON.stringify(questions))
+      }
+    
+  } catch (error) {
+    return handleError(error) as ErrorResponse; 
   }
 }

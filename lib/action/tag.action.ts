@@ -1,4 +1,4 @@
-import type {
+import {
   ActionResponse,
   ErrorResponse,
   PaginatedSearchParams,
@@ -10,6 +10,7 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { GetTagQuestionSchema, PaginatedSearchParamsSchema } from "../validation";
 import type { GetTagQuestionParams } from "../../types/action";
+import { connectDB } from "../mongodb";
 
 export const getTags = async (
   params: PaginatedSearchParams
@@ -114,3 +115,16 @@ export const getTagQuestion = async (
     return handleError(error) as ErrorResponse;
   }
 };
+
+export const getTopTags = async ():Promise<ActionResponse<TagType[]>>=>{
+    try {
+      await connectDB();
+      const tags = await Tag.find().sort({ question: -1 }).limit(5);
+      return {
+        success:true,
+        data:JSON.parse(JSON.stringify(tags))
+      }
+    } catch (error) {
+      return handleError(error) as ErrorResponse;
+    }
+}

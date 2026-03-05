@@ -6,11 +6,14 @@ import LocalSearch from "../../../components/search/LocalSearch";
 import HomeFilter from "../../../components/filters/home-filter";
 import DataRender from "../../../components/DataRender";
 import QuestionCard from "../../../components/card/QuestionCard";
-import { EMPTY_QUESTION } from "../../../constants/states";
+import { EMPTY_COLLECTION, EMPTY_QUESTION } from "../../../constants/states";
 import Link from "next/link";
 import { getSavedQuestion } from "../../../lib/action/collection.action";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
+import CommonFilter from "../../../components/filter/common-filter";
+import { CollectionFilters } from "../../../constants/filters";
+import Pagination from "../../../components/paginate/pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -25,13 +28,15 @@ export default async function Home({searchParams}:SearchParams) {
   }
 
   const {page, pageSize, query, filter}=await searchParams;
+  const currentPage = Number(page) || 1;
   const {success, data, error}=await getSavedQuestion({
-    page:Number(page) || 1,
+    page:currentPage,
     pageSize:Number(pageSize) || 10,
     query:query || "",
     filter:filter||""
   })
   const collection = data?.collection ?? [];
+  const isNext = Boolean(data?.isNext);
   return (
    <>
    <Suspense fallback={<div>loading...</div>}>
@@ -42,6 +47,7 @@ export default async function Home({searchParams}:SearchParams) {
     </section>
     <section className="mt-11 max-sm:px-2 max-sm:mt-6">
       <LocalSearch imgSrc="./dd" placeholder="Search Question..." otherClasses="flex-1" route={ROUTES.COLLECTION} />
+      <CommonFilter filters={CollectionFilters}  />
     </section>
     <HomeFilter />
      <div className="max-sm:px-3">
@@ -49,7 +55,7 @@ export default async function Home({searchParams}:SearchParams) {
           success={success}
           error={error}
           data={collection}
-          empty={EMPTY_QUESTION}
+          empty={EMPTY_COLLECTION}
         >
           {collection.map((item) => (
             <QuestionCard key={item._id} question={item.question} />
@@ -57,6 +63,7 @@ export default async function Home({searchParams}:SearchParams) {
         </DataRender>
      </div>
    </Suspense>
+   <Pagination page={currentPage} isNext={isNext} containerClasses="mt-6 px-3 max-sm:px-2" />
    </>
   );
 }

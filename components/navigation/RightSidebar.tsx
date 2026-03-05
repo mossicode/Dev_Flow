@@ -1,46 +1,61 @@
 import Link from "next/link"
 import ROUTES from "../../constants/Route"
-import { Home, LucideChevronsLeftRight } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 import TagCard from "../card/TagCard"
+import { getHotQuestions } from "../../lib/action/question.action"
+import DataRender from "../DataRender"
+import { getTopTags } from "../../lib/action/tag.action"
 
-function RightSidebar() {
-    const hotQuestions = [
-        {_id:"1", title:"how to create a custom hook in React ?"},
-        {_id:"2", title:"how to use React Query ?"},
-        {_id:"3", title:"how to use Redux ?"},
-        {_id:"4", title:"how to React Router ?"},
-        {_id:"5", title:"how to React Context ?"},
-    ]
-    const popularTags = [
-        {_id:"1", name:"React", questions:100},
-        {_id:"2", name:"javascript", questions:200},
-        {_id:"3", name:"typescript", questions:40},
-        {_id:"4", name:"nextjs", questions:30},
-        {_id:"5", name:"react-query", questions:1009},
-    ]
+async function RightSidebar() {
+    const [
+        {success, data:hotQuestions, error},
+        {success:tagSuccess, data:popularTags, error:tagError}
+    ]= await Promise.all([getHotQuestions(), getTopTags()]) 
+    const safeHotQuestions = hotQuestions ?? [];
+    const safePopularTags = popularTags ?? [];
+  
   return (
     <section className="pt-30 border-gray-800  no-scrollbar flex h-full w-64 gap-6 flex-col overflow-y-auto border-l p-6 shadow dark:shadow-none  ">
         <div>
             <h3 className="font-bold text-lg  ">Top Questions</h3>
             <div className="mt-4 flex w-full flex-col gap-5 text-base">
+              <DataRender success={success} error={error} data={hotQuestions} empty={{
+                title:"No Question Found",
+                message:"No Question has been asked yet. "
+              }} >
                 {
-                    hotQuestions.map(({_id, title})=>(
-                        <Link key={_id} href={ROUTES.PROFILE(_id)} className="flex items-center justify-between gap-4 cursor-pointer " >
-                            <p className="">{title}</p>
-                            <LucideChevronsLeftRight className="size-4" />
-                        </Link> 
+                    safeHotQuestions.map((question)=>(
+                        <div  key={question._id} className="flex flex-col gap-y-2.5">
+                            <Link href={ROUTES.QUESTION(question._id)} >
+                                <div className="flex justify-between items- gap-x-4 space-y-6 ">
+                                    <p className="text-sm">{question.title}</p>
+                                    <ChevronRightIcon />
+                                </div>
+                                
+                            </Link>
+                        </div>
                     ))
                 }
+              </DataRender>
             </div>
         </div>
-        <div className="mt-12 ">
-            <h3>Popular Tags</h3>
-            <div className="mt-7 flex flex-col gap-4 !dark:bg-white ">
-                {popularTags.map(({_id, name, questions})=> (
-                    <TagCard key={_id} _id={_id} name={name} questions={questions} showCount  />
-                ))
-
-                }
+        <div className="mt-0 ">
+            <h3 className="font-bold text-xl">Popular Tags</h3>
+            <div className="mt-5 flex flex-col gap-4 !dark:bg-white ">
+              <DataRender error={tagError} success={tagSuccess} data={popularTags} empty={{
+                title:"Not Found Tag",
+                message:"You dont have any tag yet."
+              }} >
+                   <div className="space-y-2.5">
+                     {safePopularTags.map((tag)=>(
+                        <div className="flex justify-between items-center gap-3 space-y-3 " key={tag._id}>
+                            <TagCard {...tag}/>
+                            {tag.question}
+                        </div>
+                    ))}
+                   </div>
+              </DataRender>
+              
             </div>
         </div>
     </section>

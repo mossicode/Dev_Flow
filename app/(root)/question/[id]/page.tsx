@@ -17,8 +17,10 @@ import { Suspense } from "react";
 import SaveQuestion from "../../../../components/questions/save-question";
 import { hasSavedQuestion } from "../../../../lib/action/collection.action";
 
-async function QuestionDetails({params}:RouteParams) {
-  const {id}= await params
+async function QuestionDetails({params, searchParams}:RouteParams) {
+  const {id}= await params;
+  const {page, pageSize, filter} = await searchParams;
+  const currentPage = Number(page) || 1;
   const [_, {success, data:question}] = await Promise.all([
     incrementView({questionId:id}),
     getQuestion({quesitionId:id}),
@@ -27,9 +29,9 @@ async function QuestionDetails({params}:RouteParams) {
    if(!success || !question) return redirect("/404")
     const {success:areAnswersLoaded, data:answerResult, error:answerError}=await getAnswer({
      questionId:id,
-    page:1,
-    pageSize:10,
-    filter:"latest"
+    page:currentPage,
+    pageSize:Number(pageSize) || 5,
+    filter
     })
     const hasVotedPromise=hasVoted({
       targetId:question._id,
@@ -120,6 +122,8 @@ async function QuestionDetails({params}:RouteParams) {
               success={areAnswersLoaded}
               error={answerError}
               totalAnswers={answerResult?.totalAnswers || 0}
+              page={currentPage}
+              isNext={Boolean(answerResult?.isNext)}
             />
          </section>
          <div className="mt-8">

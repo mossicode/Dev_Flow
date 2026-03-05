@@ -47,7 +47,7 @@ export const EMPTY_USERS={
    
 }
 export const EMPTY_COLLECTION={
-    title:"Ahh, NO saved question yet",
-    message:"You dont have any saved question up to now.",
+    title:"No Saved Question yet",
+    message:"You dont have any Saved Question up to now.",
    
 }

@@ -169,7 +169,8 @@ export async function getSavedQuestion(params:PaginatedSearchParams):Promise<Act
         pipline.push({$sort:sortCriteria}, {$skip:skip}, {$limit:limit});
         pipline.push({$project:{question:1, author:1}});
         const questions = await CollectionModel.aggregate(pipline) as SavedCollectionItem[];
-        const isNext=totalCount.count>skip +questions.length;
+        const totalItems = totalCount?.count ?? 0;
+        const isNext=totalItems>skip +questions.length;
         return {
             success:true,
             data:{

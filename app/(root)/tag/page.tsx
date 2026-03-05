@@ -4,6 +4,9 @@ import LocalSearch from '../../../components/search/LocalSearch';
 import DataRender from '../../../components/DataRender';
 import { EMPTY_TAGS } from '../../../constants/states';
 import TagCard from '../../../components/card/TagCard';
+import CommonFilter from '../../../components/filter/common-filter';
+import { TagFilters } from '../../../constants/filters';
+import Pagination from '../../../components/paginate/pagination';
 // import { techDescriptions } from '../../../lib/utils';
 import {getTechDescription} from "../../../lib/utils"
 
@@ -16,16 +19,18 @@ async function page({searchParams}:RouteParams) {
 
   const {success, data, error}=await getTags({page:safePage, pageSize:safePageSize, query, filter})
   const tags = data?.tags ?? [];
+  const isNext = Boolean(data?.isNext);
   return (
     <>
     <h1 className='mt-0'>Tags</h1>
-    <section className='mt-10'>
+    <section className='mt-10 flex flex-col gap-4 sm:flex-row sm:items-center'>
        <LocalSearch 
           route={'/tags'}
           imgSrc='/home'
           placeholder='Searh by tag name...'
           otherClasses='flex-1'
        />
+       <CommonFilter filters={TagFilters} />
     </section>
       <DataRender 
         success={success}
@@ -39,6 +44,7 @@ async function page({searchParams}:RouteParams) {
           ))}
         </div>
       </DataRender>
+      <Pagination page={safePage} isNext={isNext} containerClasses='mt-6' />
     </>
   )
 }

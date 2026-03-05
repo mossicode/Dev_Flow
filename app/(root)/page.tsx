@@ -8,6 +8,9 @@ import DataRender from "../../components/DataRender";
 import { EMPTY_QUESTION } from "../../constants/states";
 import HomeRefresh from "../../components/HomeRefresh";
 import { Suspense } from "react";
+import CommonFilter from "../../components/filter/common-filter";
+import { HomePageFilters } from "../../constants/filters";
+import Pagination from "../../components/paginate/pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -17,14 +20,15 @@ export const dynamic = "force-dynamic";
 
 export default async function Home({searchParams}:SearchParams) {  
   const {page, pageSize, query, filter}=await searchParams;
+  const currentPage = Number(page) || 1;
   const {success, data, error}=await getQuestions({
-    page:Number(page) || 1,
-    pageSize:Number(pageSize) || 10,
+    page:currentPage,
+    pageSize:Number(pageSize) || 5,
     query:query || "",
     filter:filter||""
   })
   const questions = Array.isArray((data as any)?.question) ? (data as any).question : [];
-  const normalizedQuery = (query || "").trim().toLowerCase();
+  const isNext = Boolean((data as any)?.isNext);
   return (
    <>
    <Suspense fallback={<div>loading...</div>}>
@@ -35,11 +39,16 @@ export default async function Home({searchParams}:SearchParams) {
       <Link href={ROUTES.ASK_QUESTION}>Ask a Quesitons</Link>
      </button>
     </section>
-    <section className="mt-11 max-sm:px-2 max-sm:mt-6">
-      <LocalSearch imgSrc="./dd" placeholder="Search Question..." otherClasses="flex-1" route="/" />
+    <section className="mt-11 max-sm:px-2 max-sm:mt-6 flex justify-between sm:items-center max-sm:flex-col gap-5 ">
+      <LocalSearch imgSrc="/home" placeholder="Search Question..." otherClasses="flex-1" route={ROUTES.HOME} />
+      <CommonFilter 
+          filters={HomePageFilters} 
+          otherClasses="min-h-12.5 w-full sm:w-fit"
+          containerClasses="w-full sm:w-auto"
+      />
     </section>
     <HomeFilter />
-     <div className="max-sm:px-3">
+     <div className="max-sm:px-3 ">
         <DataRender
           success={success}
           error={error}
@@ -50,8 +59,9 @@ export default async function Home({searchParams}:SearchParams) {
             <QuestionCard key={question._id} question={question} />
           ))}
         </DataRender>
-     </div>
+     </div> 
    </Suspense>
-   </>
+   <Pagination page={currentPage} isNext={isNext} containerClasses="mt-6 px-3 max-sm:px-2" />
+    </>
   );
 }
