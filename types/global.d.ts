@@ -67,11 +67,17 @@ interface User{
     location?:string;
     portfolio?:string;
     reputation?:number;
+    createdAt?:Date;
 }
 
 interface Collection  {
     _id:string;
     author:string | Author;
-    question:Question
+    question:Question;
+}
 
+export interface BadgeCount{
+    GOLD:number;
+    SILVER:number;
+    BRONZE:number;
 }

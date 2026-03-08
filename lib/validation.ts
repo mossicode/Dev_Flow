@@ -146,3 +146,12 @@ export const HasVoteSchema=CreateVoteSchema.pick({
 export const CollectionBaseSchema=z.object({
   questionId:z.string().min(1, {message:"Question ID is required. "})
 })
+export const GetUserSchema=z.object({
+  userId:z.string().min(1, {message:"User ID is required"})
+})
+export const GetUserQuestionSchema=PaginatedSearchParamsSchema.extend({
+  userId:z.string().min(1, {message:"User ID is required"}),
+})
+export const GetUserAnswersSchema=PaginatedSearchParamsSchema.extend({
+  userId:z.string().min(1, {message:"User ID is required"}),
+})

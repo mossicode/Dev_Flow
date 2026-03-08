@@ -1,4 +1,6 @@
+import { integer } from 'zod/v4/core/regexes.d.cts';
 import type { PaginatedSearchParams } from './global';
+import { PaginatedSearchParams } from './global';
 
 export interface SignInWithOAuthParams {
     provider: "github" | "google";
@@ -55,4 +57,13 @@ export interface HasVoteResponse {
 }
 export interface CollectionBaseParams{
     questionId:string;
+}
+export interface GetUserParams{
+    userId:string;
+}
+export interface QetUsersParams extends Omit<PaginatedSearchParams, "query"|"filter"| "sort"> {
+    userId:string;
+}
+export interface GetUerAnswersParams extends PaginatedSearchParams {
+    userId:string
 }

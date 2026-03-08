@@ -5,15 +5,13 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { cn } from '../../../lib/utils'
 import ROUTES from '../../../constants/Route'
-import { SheetClose } from '../../ui/sheet'
-import Image from 'next/image'
-
+import { SheetClose } from '../../ui/sheet';
 function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, userId?: string }) {
-  const pathName = usePathname()
-
+  const pathName = usePathname();
   return (
     <div className=''>
       {sidebrarLinks.map((item) => {
+        const Icons=item.imgURL;
         const href = item.label === "profile"
           ? (userId ? ROUTES.PROFILE(userId) : ROUTES.SIGN_IN)
           : item.route
@@ -32,7 +30,7 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
             )}
             key={item.label}
           >
-            <Image src={item.imgURL} alt={item.label} className='dark:invert max-md:ms-1 text-black' width={16} height={16} />
+            <Icons className="text-white" />
             <p className={cn("",isActive ? "font-bold text-white" : "font-light dark:text-white text-black",
               isMobileNav?"":"max-md:hidden"
             )}>{item.label}</p>

@@ -1,36 +1,43 @@
-export const sidebrarLinks = [
+import { MapPin, HomeIcon,type LucideIcon,Group, Database , PersonStandingIcon, LucidePersonStanding, CircleQuestionMark, TagIcon} from 'lucide-react';
+interface SidebarProps{
+    imgURL:LucideIcon;
+    label:string;
+    route:string;
+}
+
+export const sidebrarLinks:SidebarProps[] = [
     {
-        imgURL:"/home.png",
+        imgURL:HomeIcon,
         label:"home",
         route:"/"
     },
     {
-        imgURL:"/group.png",
+        imgURL:Group,
         label:"community",
         route:"/community"
     },
     {
-        imgURL:"/database.png",
+        imgURL:Database,
         label:"collection",
         route:"/collection"
     },
     {
-        imgURL:"/promotion.png",
+        imgURL:PersonStandingIcon,
         label:"job",
         route:"/job"
     },
     {
-        imgURL:"/user.png",
+        imgURL:LucidePersonStanding,
         label:"profile",
         route:"/profile"
     },
     {
-        imgURL:"/price-tag.png",
+        imgURL:TagIcon,
         label:"tag",
         route:"/tag"
     },
     {
-        imgURL:"/question-mark.png",
+        imgURL:CircleQuestionMark,
         label:"ask-question",
         route:"/ask-question"
     },

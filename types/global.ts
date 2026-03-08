@@ -73,4 +73,11 @@ export interface User {
   location?: string;
   portfolio?: string;
   reputation?: number;
+  createdAt?: Date;
+}
+
+export interface BadgeCount {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
 }
