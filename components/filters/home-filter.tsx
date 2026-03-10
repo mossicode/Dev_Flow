@@ -6,8 +6,10 @@ import { cn } from '../../lib/utils';
 import { removeKeysFromQuery } from '../../lib/url';
 import qs from "query-string";
 const filters =[
-    {name:"React", value:"react"},
-    {name:"JavaScript", value:"javascript"},
+    {name:"Popular", value:"popular"},
+    {name:"Newest", value:"newest"},
+    {name:"Unanswered", value:"unanswered"},
+    {name:"Recommended", value:"recommended"},
 ]
 
 function HomeFilter() {

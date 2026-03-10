@@ -1,5 +1,6 @@
 "use server";
 
+import { createHash } from "crypto";
 import mongoose from "mongoose";
 import { AuthCredentials } from "../../types/action";
 import { ActionResponse, ErrorResponse } from "../../types/global";
@@ -14,6 +15,20 @@ import { signIn } from "../../auth";
 import { AuthError } from "next-auth";
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
+const getEmailAvatar = (email: string) => {
+    const hash = createHash("md5").update(email).digest("hex");
+    return `https://www.gravatar.com/avatar/${hash}?s=200&d=404`;
+};
+const resolveEmailAvatar = async (email: string): Promise<string> => {
+    const avatarUrl = getEmailAvatar(email);
+
+    try {
+        const response = await fetch(avatarUrl, { method: "GET", cache: "no-store" });
+        return response.ok ? avatarUrl : "";
+    } catch {
+        return "";
+    }
+};
 
 function mapAuthError(error: unknown): ErrorResponse | null {
     if (error instanceof AuthError) {
@@ -61,6 +76,7 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
             }
 
             const hashedPassword = await bcrypt.hash(password, 12);
+            const avatar = await resolveEmailAvatar(normalizedEmail);
 
             const [newUser] = await User.create(
                 [
@@ -68,6 +84,7 @@ export async function signUPWithCredentials(params: AuthCredentials): Promise<Ac
                         username,
                         name,
                         email: normalizedEmail,
+                        image: avatar,
                     },
                 ],
                 { session }

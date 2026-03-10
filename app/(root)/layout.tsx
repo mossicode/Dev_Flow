@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Main Content (Scrollable) */}
-        <main className="flex-1 overflow-y-auto no-scrollbar px-6 pb-6 pt-30">
+        <main className="flex-1 overflow-y-auto no-scrollbar px-6 max-sm:px-1.5 pb-6 pt-30 max-sm:pt-20 max-sm:pb-4">
           
           {children}
         </main>

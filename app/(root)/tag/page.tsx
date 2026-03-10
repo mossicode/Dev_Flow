@@ -24,13 +24,17 @@ async function page({searchParams}:RouteParams) {
     <>
     <h1 className='mt-0'>Tags</h1>
     <section className='mt-10 flex flex-col gap-4 sm:flex-row sm:items-center'>
-       <LocalSearch 
+      <div className='w-full'>
+         <LocalSearch 
           route={'/tags'}
           imgSrc='/home'
           placeholder='Searh by tag name...'
           otherClasses='flex-1'
        />
-       <CommonFilter filters={TagFilters} />
+      </div>
+       <div className='w-fit max-sm:w-full'>
+          <CommonFilter filters={TagFilters} otherClasses='min-h-13 min-w-40 max-sm:min-h-11' />
+       </div>
     </section>
       <DataRender 
         success={success}

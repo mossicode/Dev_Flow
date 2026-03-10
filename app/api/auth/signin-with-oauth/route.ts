@@ -11,6 +11,8 @@ import { ValidationError } from "../../../../lib/http-errors";
 import User from "../../../../database/user.model";
 import Account from "../../../../database/account.model";
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
 export async function POST(request: Request) {
   await connectDB();
 
@@ -35,6 +37,7 @@ export async function POST(request: Request) {
     }
 
     const { name, username, email, image } = user;
+    const normalizedEmail = normalizeEmail(email);
 
     // ✅ Slugify Username
     const slugifiedUsername = slugify(username, {
@@ -44,7 +47,7 @@ export async function POST(request: Request) {
     });
 
     // ✅ Check if user exists
-    let existingUser = await User.findOne({ email }).session(session);
+    let existingUser = await User.findOne({ email: normalizedEmail }).session(session);
 
     if (!existingUser) {
       // 🔥 Create new user
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
             name,
             username,
             slugifiedUsername,
-            email,
+            email: normalizedEmail,
             image,
           },
         ],
@@ -65,7 +68,7 @@ export async function POST(request: Request) {
       const updatedData: { name?: string; image?: string } = {};
 
       if (existingUser.name !== name) updatedData.name = name;
-      if (existingUser.image !== image) updatedData.image = image;
+      if (image && existingUser.image !== image) updatedData.image = image;
 
       if (Object.keys(updatedData).length > 0) {
         await User.updateOne(

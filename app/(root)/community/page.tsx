@@ -25,16 +25,22 @@ async function page({searchParams}:RouteParams) {
   return (
     <div>
         <h1 className='font-bold mt-4'>All Users</h1>
-        <div className='mt-6'>
-          <LocalSearch 
+        <div className='mt-6 '>
+        <div className='flex gap-2 max-sm:flex-col'>
+           <div className='w-full'>
+             <LocalSearch 
             imgSrc='/home'
             placeholder='Search developers'
             route={ROUTES.COMMUNITY}
           />
-          <CommonFilter filters={UserFilters} />
+           </div>
+          <div className='w-fit max-sm:w-full'>
+            <CommonFilter filters={UserFilters} otherClasses='min-h-14 min-w-40 sm:min-w-full' />
+          </div>
+        </div>
 
           <DataRender data={users} success={success} error={error} empty={EMPTY_USERS}>
-             <div className='flex flex-wrap gap-5' >
+             <div className='flex flex-wrap gap-10 ' >
             {users.map((user)=>(
              
                 <UserCard key={user._id}  {...user} />

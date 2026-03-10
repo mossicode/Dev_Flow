@@ -45,9 +45,11 @@ export default async function Home({searchParams}:SearchParams) {
       <h1 className="font-bold mt-2">Saved Question</h1>
    
     </section>
-    <section className="mt-11 max-sm:px-2 max-sm:mt-6">
-      <LocalSearch imgSrc="./dd" placeholder="Search Question..." otherClasses="flex-1" route={ROUTES.COLLECTION} />
-      <CommonFilter filters={CollectionFilters}  />
+    <section className="mt-11 max-sm:px-2 max-sm:mt-6 flex gap-2 max-sm:flex-col items-center">
+      <LocalSearch imgSrc="./dd" placeholder="Search Question..." otherClasses="w-full" route={ROUTES.COLLECTION} />
+      <div className="w-fit max-sm:w-full ">
+        <CommonFilter filters={CollectionFilters} otherClasses="min-h-12 min-w-40"  />
+      </div>
     </section>
     <HomeFilter />
      <div className="max-sm:px-3">

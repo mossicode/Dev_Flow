@@ -37,8 +37,8 @@ export default function CommonFilter({filters, otherClasses='', containerClasses
   return (
     <div className={cn("relative mx-auto w-full", containerClasses)}>
       <Select onValueChange={handleUpdateParams} value={paramsFilter || undefined}>
-        <SelectTrigger className={cn("w-full sm:w-fit", otherClasses)}>
-          <SelectValue placeholder="Select filter" />
+        <SelectTrigger className={cn("w-full sm:w-fit ", otherClasses)}>
+          <SelectValue placeholder="Select filter "  className="py-4 bg-red-400" />
         </SelectTrigger>
         <SelectContent className="">
           {filters.map((item) => (

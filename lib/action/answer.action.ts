@@ -1,13 +1,13 @@
 "use server"
 
-import { AnswerQuestionParams, GetAnswerParams } from "../../types/action";
+import { AnswerQuestionParams, DeleteAnswerParams, GetAnswerParams } from "../../types/action";
 import { ActionResponse, ErrorResponse } from "../../types/global";
 import Answer from '../../database/answer.model';
 import action from "../handlers/action";
-import { AnswerQuestionSchema, GetAnswerQuestionSchema } from "../validation";
+import { AnswerQuestionSchema, DeleteAnswerSchema, GetAnswerQuestionSchema } from "../validation";
 import handleError from "../handlers/error";
 import mongoose from "mongoose";
-import { Question } from "../../database";
+import { Question, Vote } from "../../database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "../../constants/Route";
 import type { Answer as AnswerType } from "../../types/global";
@@ -102,5 +102,53 @@ export async function getAnswer(params:GetAnswerParams):Promise<ActionResponse<{
         }   
     } catch (error) {
         return handleError(error) as ErrorResponse;
+    }
+}
+
+export async function deleteAnswerById(params: DeleteAnswerParams): Promise<ActionResponse> {
+    const validationResult = await action({
+        params,
+        schema: DeleteAnswerSchema,
+        authorize: true,
+    });
+
+    const { answerId } = validationResult.params as DeleteAnswerParams;
+    const userId = validationResult.session?.user?.id;
+    if (!userId) {
+        throw new Error("Unauthorized");
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const answer = await Answer.findById(answerId).session(session);
+        if (!answer) {
+            throw new Error("Answer not Found");
+        }
+
+        if (answer.author?.toString() !== userId) {
+            throw new Error("You are not allowed to delete this answer");
+        }
+
+        const question = await Question.findById(answer.question).session(session);
+        if (!question) {
+            throw new Error("Question not Found");
+        }
+
+        question.answers = Math.max(0, question.answers - 1);
+        await question.save({ session });
+
+        await Vote.deleteMany({ id: answer._id, type: "answer" }).session(session);
+        await Answer.findByIdAndDelete(answerId).session(session);
+
+        await session.commitTransaction();
+        revalidatePath(ROUTES.QUESTION(question._id.toString()));
+        revalidatePath(ROUTES.PROFILE(userId));
+        return { success: true };
+    } catch (error) {
+        await session.abortTransaction();
+        return handleError(error) as ErrorResponse;
+    } finally {
+        await session.endSession();
     }
 }

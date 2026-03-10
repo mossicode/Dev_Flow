@@ -8,6 +8,7 @@ interface Props{
     name:string,
     question?:number;
     questions?:number;
+    count?:number;
     showCount?:boolean;
     compact?:boolean;
     remove?:boolean;
@@ -20,6 +21,7 @@ function TagCard({
   name,
   question,
   questions,
+  count,
   showCount,
   compact=false,
   remove,
@@ -27,7 +29,7 @@ function TagCard({
   handleRemove
   }:Props) {
     const desc=getTechDescription(name);
-    const questionCount = question ?? questions ?? 0;
+    const questionCount = count ?? question ?? questions ?? 0;
 
     const showRemove = Boolean(remove && handleRemove);
     const content = <div className='w-full flex justify-between items-center gap-1'>

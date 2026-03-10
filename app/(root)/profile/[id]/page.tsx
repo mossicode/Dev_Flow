@@ -1,4 +1,4 @@
-import { getUserQuestion, getUsers } from '../../../../lib/action/user.action'
+import { getUserAnswer, getUserQuestion, getUsers, getUsertopTags } from '../../../../lib/action/user.action'
 import { notFound } from 'next/navigation';
 import { auth } from '../../../../auth';
 import Image from 'next/image';
@@ -6,9 +6,14 @@ import dayjs from "dayjs"
 import { Calculator, Locate } from 'lucide-react';
 import Stats from '../../../../components/user/stats';
 import DataRender from '../../../../components/DataRender';
-import { EMPTY_QUESTION } from '../../../../constants/states';
+import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from '../../../../constants/states';
 import QuestionCard from '../../../../components/card/QuestionCard';
+import AnswerCard from '../../../../components/card/answer-card';
 import Pagination from '../../../../components/paginate/pagination';
+import { Tabs, TabsContent, TabsList,TabsTrigger } from '../../../../components/ui/tabs';
+import { Card, CardContent } from '../../../../components/ui/card';
+import TagCard from '../../../../components/card/TagCard';
+import { getTechDescription } from '../../../../lib/utils';
 
 type ProfilePageProps = Promise<{ id: string }>;
 type ProfileSearchParams = Promise<{ page?: string; pageSize?: string }>;
@@ -42,8 +47,30 @@ async function page({ params, searchParams }: { params: ProfilePageProps; search
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
   });
-
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
+  
+  const {
+    success: userAnswerSuccess,
+    data: userAnswers,
+    error: userAnswerError,
+  } = await getUserAnswer({
+    userId: id,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+  });
+    const { answers, isNext: hasMoreAnswers } = userAnswers!;
+
+
+  const {
+    success:userTopTagSuccess,
+    data:userToptags,
+    error:userTopTagError,
+  }= await getUsertopTags({
+    userId:id
+  })
+  const tags = userToptags?.tags ?? [];
+
+
 
   return (
     <>
@@ -65,7 +92,7 @@ async function page({ params, searchParams }: { params: ProfilePageProps; search
                   <p>@{username}</p>
                 </div>
 
-                <div className='flex flex-wrap items-center gap-x-4 gap-y-2 max-sm:gap-x-1 max-xs:flex-col max-xs:items-start'>
+                <div className='flex flex-wrap items-center gap-x-0  gap-y-2 max-sm:gap-x-1 max-xs:flex-col max-xs:items-start'>
                   <div className='max-xs:w-full'>
                     {location && (
                       <div className='flex items-center gap-x-1.5'>
@@ -113,14 +140,56 @@ async function page({ params, searchParams }: { params: ProfilePageProps; search
           BRONZE: 0,
         }}
       />
+      <section className='w-full flex flex-col lg:flex-row gap-4'>
+       <div className='w-full lg:w-2/3 min-w-0'>
+           <Tabs defaultValue="question" className="w-full max-w-full mt-4 mb-0 pb-0">
+              <TabsList className="">
+                <TabsTrigger className="m-" value="question">Questions</TabsTrigger>
+                <TabsTrigger className="" value="answer">Answers</TabsTrigger>
+              </TabsList>
+              <TabsContent value="question" className="">
+                <div className="w-full ">
+                <DataRender success={userQuestionSuccess} error={userQuestionError} data={questions} empty={EMPTY_QUESTION}>
+                {questions.map((question) => (
+                  <QuestionCard 
+                      question={question}
+                      key={question._id}
+                      compact
+                      showActionBtns={loggedInUserId === question.author._id}
+                      />
+                ))}
+              </DataRender>
 
-      <DataRender success={userQuestionSuccess} error={userQuestionError} data={questions} empty={EMPTY_QUESTION}>
-        {questions.map((question) => (
-          <QuestionCard question={question} key={question._id} />
-        ))}
-      </DataRender>
+              <Pagination page={page} isNext={hasMoreQuestions} />
+                </div>
+              </TabsContent>
+              <TabsContent value="answer" className="">
+                <DataRender success={userAnswerSuccess} error={userAnswerError} data={answers} empty={EMPTY_ANSWERS}>
+                  {answers.map((answer) => (
+                    <Card key={answer._id} className="mb-3 py-3 sm:py-6">
+                      <CardContent className="px-3 sm:px-6">
+                        <AnswerCard {...answer} compact  showActionBtns={loggedInUserId === answer.author._id}/>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </DataRender>
+                <Pagination page={page} isNext={hasMoreAnswers} />
+              </TabsContent>
+        </Tabs>
+       </div>
+       <div className='w-full lg:w-1/3 min-w-0'>
+          <h1 className='mt-5 font-bold text-xl mb-2'>Top Tech</h1>
+          <DataRender success={userTopTagSuccess} data={tags} error={userTopTagError} empty={{title:"You dont have any Top Tag", message:"you have not been add any top Tap "}} >
+                <div className='mt-2 space-y-2 flex gap-y-4 flex-col'>
+                  {tags.map((tag)=>(
+                    <TagCard key={tag._id} {...tag}  showCount />
+                  ))}
+                </div>
+          </DataRender>
+       </div>
+     </section>
 
-      <Pagination page={page} isNext={hasMoreQuestions} />
+      
     </>
   )
 }

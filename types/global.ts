@@ -29,6 +29,7 @@ export interface Question {
 export interface Answer {
   _id: string;
   author: Author;
+  question?: string | { _id: string };
   content: string;
   createdAt: Date;
   upvotes:number;

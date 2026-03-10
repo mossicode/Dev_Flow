@@ -67,3 +67,12 @@ export interface QetUsersParams extends Omit<PaginatedSearchParams, "query"|"fil
 export interface GetUerAnswersParams extends PaginatedSearchParams {
     userId:string
 }
+export interface GetUserTagParams {
+    userId:string;
+}
+export interface DeleteQuestionParams{
+    questionId:string;
+}
+export interface DeleteAnswerParams{
+    answerId:string;
+}

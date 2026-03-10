@@ -7,7 +7,6 @@ import { getQuestions } from "../../lib/action/question.action";
 import DataRender from "../../components/DataRender";
 import { EMPTY_QUESTION } from "../../constants/states";
 import HomeRefresh from "../../components/HomeRefresh";
-import { Suspense } from "react";
 import CommonFilter from "../../components/filter/common-filter";
 import { HomePageFilters } from "../../constants/filters";
 import Pagination from "../../components/paginate/pagination";
@@ -31,9 +30,8 @@ export default async function Home({searchParams}:SearchParams) {
   const isNext = Boolean((data as any)?.isNext);
   return (
    <>
-   <Suspense fallback={<div>loading...</div>}>
        <HomeRefresh />
-    <section className=" px-3 flex w-full flex-col-reverse sm:flex-row sm:items-center max-sm:px-2 justify-between">
+    <section className=" px-3 max-sm:px-1.5 flex w-full flex-col-reverse sm:flex-row sm:items-center  justify-between">
       <h1 className="font-bold mt-2">All questions</h1>
      <button className="min-h-11.5 rounded-sm max-sm:min-h-5 px-4 py-3 max-sm:py-2 max-sm:text-sm  bg-chart-5 text-white">
       <Link href={ROUTES.ASK_QUESTION}>Ask a Quesitons</Link>
@@ -48,7 +46,7 @@ export default async function Home({searchParams}:SearchParams) {
       />
     </section>
     <HomeFilter />
-     <div className="max-sm:px-3 ">
+     <div className=" ">
         <DataRender
           success={success}
           error={error}
@@ -60,7 +58,7 @@ export default async function Home({searchParams}:SearchParams) {
           ))}
         </DataRender>
      </div> 
-   </Suspense>
+   
    <Pagination page={currentPage} isNext={isNext} containerClasses="mt-6 px-3 max-sm:px-2" />
     </>
   );

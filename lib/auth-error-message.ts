@@ -5,9 +5,9 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   CredentialsSignin: "Invalid email or password.",
   Default: "We could not sign you in. Please try again.",
   OAuthAccountNotLinked: "This email is linked to another sign-in method. Use the original provider.",
-  OAuthCallbackError: "GitHub did not complete sign in. Please try again.",
-  OAuthCreateAccount: "We could not create your account from GitHub. Please try again.",
-  OAuthSignin: "Could not start GitHub sign in. Please try again.",
+  OAuthCallbackError: "OAuth provider did not complete sign in. Please try again.",
+  OAuthCreateAccount: "We could not create your account from OAuth provider. Please try again.",
+  OAuthSignin: "Could not start OAuth sign in. Please try again.",
   SessionRequired: "Please sign in to continue.",
   Verification: "Verification failed or expired. Please request a new sign in link.",
 };

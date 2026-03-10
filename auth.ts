@@ -1,5 +1,6 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { api } from "./lib/api";
@@ -12,6 +13,98 @@ import { connectDB } from "./lib/mongodb";
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const credentialsProvider = Credentials({
+    name: "Credentials",
+    credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+        try {
+            await connectDB();
+
+            const email = credentials?.email as string | undefined;
+            const password = credentials?.password as string | undefined;
+            if (!email || !password) return null;
+            const normalizedEmail = normalizeEmail(email);
+
+            let account = await Account.findOne({
+                provider: { $regex: "^credentials$", $options: "i" },
+                providerAccountId: normalizedEmail,
+            });
+
+            if (!account) {
+                account = await Account.findOne({
+                    provider: { $regex: "^credentials$", $options: "i" },
+                    providerAccountId: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                });
+            }
+
+            // Fallback for legacy records where providerAccountId was not normalized.
+            if (!account) {
+                const existingUser = await User.findOne({
+                    email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+                });
+                if (existingUser) {
+                    account = await Account.findOne({
+                        userId: existingUser._id,
+                        provider: { $regex: "^credentials$", $options: "i" },
+                    });
+                }
+            }
+
+            if (!account?.password) return null;
+
+            const isBcryptHash = account.password.startsWith("$2a$") || account.password.startsWith("$2b$") || account.password.startsWith("$2y$");
+            let isPasswordValid = false;
+
+            if (isBcryptHash) {
+                isPasswordValid = await bcrypt.compare(password, account.password);
+            } else {
+                isPasswordValid = account.password === password;
+                if (isPasswordValid) {
+                    account.password = await bcrypt.hash(password, 12);
+                    await account.save();
+                }
+            }
+
+            if (!isPasswordValid) return null;
+
+            const user = await User.findById(account.userId);
+            if (!user) return null;
+
+            return {
+                id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                image: user.image,
+            };
+        } catch {
+            return null;
+        }
+    },
+});
+
+const providers: NextAuthConfig["providers"] = [credentialsProvider];
+
+if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
+    providers.unshift(
+        GitHub({
+            clientId: process.env.AUTH_GITHUB_ID,
+            clientSecret: process.env.AUTH_GITHUB_SECRET,
+        })
+    );
+}
+
+if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
+    providers.unshift(
+        Google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
+        })
+    );
+}
 
 // Protect production deployments from accidental localhost Auth.js base URL.
 if (process.env.NODE_ENV === "production" && process.env.VERCEL_URL) {
@@ -26,80 +119,7 @@ if (process.env.NODE_ENV === "production" && process.env.VERCEL_URL) {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     trustHost: true,
-    providers: [
-        GitHub,
-        Credentials({
-            name: "Credentials",
-            credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials) {
-                try {
-                    await connectDB();
-
-                    const email = credentials?.email as string | undefined;
-                    const password = credentials?.password as string | undefined;
-                    if (!email || !password) return null;
-                    const normalizedEmail = normalizeEmail(email);
-
-                    let account = await Account.findOne({
-                        provider: { $regex: "^credentials$", $options: "i" },
-                        providerAccountId: normalizedEmail,
-                    });
-
-                    if (!account) {
-                        account = await Account.findOne({
-                            provider: { $regex: "^credentials$", $options: "i" },
-                            providerAccountId: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
-                        });
-                    }
-
-                    // Fallback for legacy records where providerAccountId was not normalized.
-                    if (!account) {
-                        const existingUser = await User.findOne({
-                            email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
-                        });
-                        if (existingUser) {
-                            account = await Account.findOne({
-                                userId: existingUser._id,
-                                provider: { $regex: "^credentials$", $options: "i" },
-                            });
-                        }
-                    }
-
-                    if (!account?.password) return null;
-
-                    const isBcryptHash = account.password.startsWith("$2a$") || account.password.startsWith("$2b$") || account.password.startsWith("$2y$");
-                    let isPasswordValid = false;
-
-                    if (isBcryptHash) {
-                        isPasswordValid = await bcrypt.compare(password, account.password);
-                    } else {
-                        isPasswordValid = account.password === password;
-                        if (isPasswordValid) {
-                            account.password = await bcrypt.hash(password, 12);
-                            await account.save();
-                        }
-                    }
-
-                    if (!isPasswordValid) return null;
-
-                    const user = await User.findById(account.userId);
-                    if (!user) return null;
-
-                    return {
-                        id: user._id.toString(),
-                        name: user.name,
-                        email: user.email,
-                        image: user.image,
-                    };
-                } catch {
-                    return null;
-                }
-            },
-        }),
-    ],
+    providers,
     callbacks: {
         async session({ session, token }) {
             session.user.id = token.sub as string;

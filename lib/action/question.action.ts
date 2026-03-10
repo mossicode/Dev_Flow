@@ -2,14 +2,17 @@
 import mongoose from "mongoose";
 import type { ActionResponse, ErrorResponse, PaginatedSearchParams, Question as QuestionType } from "../../types/global";
 import handleError from "../handlers/error";
-import { AskQuestionSchema, IncrementViewsSchema, PaginatedSearchParamsSchema } from "../validation";
+import { AskQuestionSchema, DeleteQuestionSchema, IncrementViewsSchema, PaginatedSearchParamsSchema } from "../validation";
 import Tag from "../../database/tag.model";
 import TagQuestion from "../../database/tag-question.model";
 import User from "../../database/user.model";
 import action from "../handlers/action";
 import Question from "../../database/question.medel";
-import { IncrementViewParams } from "../../types/action";
+import { DeleteQuestionParams, IncrementViewParams } from "../../types/action";
 import { connectDB } from "../mongodb";
+import { Answer, Collection, Vote } from "../../database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "../../constants/Route";
 
 interface CreateQuestionParams {
   title: string;
@@ -329,4 +332,60 @@ export async function getHotQuestions():Promise<ActionResponse<QuestionType[]>>{
   } catch (error) {
     return handleError(error) as ErrorResponse; 
   }
+}
+export async function deleteQuestionById(params: DeleteQuestionParams): Promise<ActionResponse> {
+    const validationResult = await action({
+      params,
+      authorize: true,
+      schema: DeleteQuestionSchema
+    });
+
+    const { questionId } = validationResult.params as DeleteQuestionParams;
+    const userId = validationResult.session?.user?.id;
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const question = await Question.findById(questionId).session(session);
+        if (!question) {
+          throw new Error("Question not Found");
+        }
+
+        if (question.author?.toString() !== userId) {
+          throw new Error("You are not allowed to delete this question");
+        }
+
+        const answerIds = (await Answer.find({ question: questionId }).select("_id").session(session)).map(
+          (answer) => answer._id
+        );
+        const tagIds = (question.tags || []).map((tagId: mongoose.Types.ObjectId) => tagId.toString());
+
+        if (tagIds.length > 0) {
+          await Tag.updateMany({ _id: { $in: tagIds } }, { $inc: { question: -1 } }, { session });
+        }
+
+        if (answerIds.length > 0) {
+          await Vote.deleteMany({ id: { $in: answerIds }, type: "answer" }).session(session);
+        }
+
+        await Vote.deleteMany({ id: question._id, type: "question" }).session(session);
+        await Answer.deleteMany({ question: questionId }).session(session);
+        await Collection.deleteMany({ question: questionId }).session(session);
+        await TagQuestion.deleteMany({ question: questionId }).session(session);
+        await Question.findByIdAndDelete(questionId).session(session);
+
+        await session.commitTransaction();
+        revalidatePath(ROUTES.HOME);
+        revalidatePath(ROUTES.QUESTION(questionId));
+        revalidatePath(ROUTES.PROFILE(userId));
+        return { success: true };
+    } catch (error) {
+      await session.abortTransaction();
+      return handleError(error) as ErrorResponse;
+    } finally {
+      await session.endSession();
+    }
 }

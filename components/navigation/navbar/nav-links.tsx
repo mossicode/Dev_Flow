@@ -30,7 +30,7 @@ function NavLinks({ isMobileNav = false, userId }: { isMobileNav?: boolean, user
             )}
             key={item.label}
           >
-            <Icons className="text-white" />
+            <Icons className={cn("" ,isActive ? "text-white":"text-gray-500")} size={20} />
             <p className={cn("",isActive ? "font-bold text-white" : "font-light dark:text-white text-black",
               isMobileNav?"":"max-md:hidden"
             )}>{item.label}</p>

@@ -39,7 +39,7 @@ const StateSkeleton=({image, title, message, button}:StateSkeletonProps)=>{
         <Image src={image.light} alt={image.alt} height={160} width={150} className='block dark:hidden' />
         <h2 className='font-bold w-full text-wrap text-center'>{title}</h2>
         <p className='text-gray-400 text-center'>{message}</p>
-        {button && <Link href={button.href}><button className='bg-white text-black mb-5 px-3 py-1 rounded-sm font-serif'>{button.text}</button></Link>}
+        {button && <Link href={button.href}><button className='bg-white text-black mb-5 px-3 max-sm:px-1.5 py-1 rounded-sm font-serif'>{button.text}</button></Link>}
       </>
     </div>
   );
@@ -54,8 +54,8 @@ export default function DataRender<T>({
   if(!success){
     return <StateSkeleton
      image={
-    { light:"/notFound.png",
-      dark:"/notfound.png",
+    { light:"/not_found.png",
+      dark:"/not_found.png",
       alt:"empty"
     }
   }
@@ -70,8 +70,8 @@ export default function DataRender<T>({
   }
   if(!data || data.length===0) return <StateSkeleton 
   image={
-    { light:"/notFound.png",
-      dark:"/notFound.png",
+    { light:"/not_found.png",
+      dark:"/not_found.png",
       alt:"empty"
     }
   }
